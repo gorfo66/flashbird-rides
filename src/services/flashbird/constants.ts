@@ -1,0 +1,1 @@
+export const flashbirdUrl = 'https://pegase.api-smt.ovh/graphql';

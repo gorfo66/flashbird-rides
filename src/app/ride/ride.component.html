@@ -1,0 +1,19 @@
+<ng-container *ngIf="(ride$ | async) as ride">
+  <h1>{{ride.name}}</h1>
+  <div>{{ride.startDate}}</div>
+
+
+
+  <div #map style="height: 500px"></div>
+
+  <h2>Speed</h2>
+  <div>Average speed: {{averageSpeed$ | async}} km/h</div>
+  <div>Max speed : {{maxSpeed$ | async }} km/h</div>
+  <canvas #speedChart></canvas>
+
+  <h2>Tilt</h2>
+  <div>Average tilt: {{averageTilt$ | async}}°</div>
+  <div>Max tilt : {{maxTilt$ | async }}°</div>
+  <canvas #tiltChart></canvas>
+
+</ng-container>

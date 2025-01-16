@@ -1,0 +1,16 @@
+.login-panel {
+  display: flex;
+  justify-content: center;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  gap: 20px;
+}
+
+
+.server-error {
+  color:  var(--mat-sys-error);
+}

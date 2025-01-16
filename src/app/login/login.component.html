@@ -1,0 +1,31 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+<div class = 'login-panel'>
+  <mat-card>
+    <mat-card-content>
+      <div class = 'card-content'>
+
+        <div class = 'server-error' *ngIf="(errorMessage$ | async) as message">{{message}}</div>
+
+        <mat-form-field class = 'field'>
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="login">
+          <mat-error *ngIf="(login.errors || {})['required']">You need to provide an email</mat-error>
+          <mat-error *ngIf="(login.errors || {})['email']">The email format is invalid</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class = 'field'>
+          <mat-label>Password</mat-label>
+          <input matInput type = 'password' formControlName="password">
+        </mat-form-field>
+
+      </div>
+
+    </mat-card-content>
+    <mat-card-actions>
+      <button type = 'submit' mat-button>Connect</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+</form>

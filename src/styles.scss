@@ -1,1 +1,34 @@
+@use '@angular/material' as mat;
+
+
 /* You can add global styles to this file, and also import other style files */
+html, body { height: 100%; background-color: var(--fb-background);}
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
+
+
+
+
+
+html {
+  --fb-red: #ea2b1f;
+  --fb-background: #F9F9F9;
+
+  @include mat.theme((
+    color: mat.$red-palette,
+    typography: Roboto,
+    density: 0,
+  ));
+
+  @include mat.card-overrides((
+    elevated-container-color: #fff,
+  ));
+}
+
+
+
+.container {
+  width: 100%;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}

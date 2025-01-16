@@ -1,0 +1,31 @@
+
+Total distance {{totalDistance$ | async}} km
+
+<div class = 'rides'>
+  <div class = 'ride' *ngFor="let ride of (rides$ | async)">
+    <mat-card>
+      <mat-card-header><h3>{{ride.name}}</h3></mat-card-header>
+      <mat-card-content>
+        <div class = 'ride-date'>
+          {{ride.startDate | date: 'dd MMMM yyyy'}}
+        </div>
+        <div class = 'ride-info'>
+
+          <div class = 'date'>
+            <span class = 'departure'>{{ride.startDate | date: 'HH:mm'}} : {{ride.startLocation}}</span>
+            <span class = 'arrival'>{{ride.endDate | date: 'HH:mm'}} : {{ride.endLocation}}</span>
+          </div>
+          
+          <div class = 'distance'>
+            {{formatDistance(ride.distance)}}
+          </div>
+
+        </div>
+        
+      </mat-card-content>
+      <mat-card-actions>
+        <a [routerLink]="['/ride', ride.id]" mat-button>Show the ride</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
