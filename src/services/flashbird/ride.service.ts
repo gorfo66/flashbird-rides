@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { filter, map, mergeMap, Observable } from 'rxjs';
+import { map, mergeMap, Observable } from 'rxjs';
 import { Log, Ride } from '../../models';
 import { ElevationService } from '../elevation.service';
 import { flashbirdUrl } from './constants';
+import { distanceInKmBetweenEarthCoordinates } from '../../helpers';
 
 
 const postProcessRide = (ride: Ride): Ride => {
@@ -32,29 +33,6 @@ const postProcessLog = (logs: Log[]) => {
   });
 }
 
-
-const degreesToRadians = (degrees: number) => {
-  return degrees * Math.PI / 180;
-}
-
-const distanceInKmBetweenEarthCoordinates = (log1: Log, log2: Log) => {
-  let lat1 = log1.latitude;
-  let lon1 = log1.longitude;
-  let lat2 = log2.latitude;
-  let lon2 = log2.longitude;
-  var earthRadiusKm = 6371;
-
-  var dLat = degreesToRadians(lat2-lat1);
-  var dLon = degreesToRadians(lon2-lon1);
-
-  lat1 = degreesToRadians(lat1);
-  lat2 = degreesToRadians(lat2);
-
-  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-          Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  return earthRadiusKm * c;
-}
 
 
 @Injectable({

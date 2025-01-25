@@ -1,18 +1,86 @@
+.timeline {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
 .rides {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .ride {
-  flex: 1 0 21%; /* explanation below */
+  display: flex;
+  flex-direction: row;
+
+  .timeline-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--fb-red);
+    
+    .day {
+      font: var(--mat-sys-title-large);
+    }
+
+    .month {
+      font: var(--mat-sys-title-small);
+    }
+   }
+
+  .timeline-line {
+    position: relative;
+    width: 40px;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      width: 2px;
+      top:0;
+      left: 50%;
+      bottom: 0;
+      background-color: var(--fb-red);
+      transform: translateX(-50%);
+    }
+
+    &.with-date::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      left: 50%;
+      top: 50%;
+      border-radius: 100%;
+      background-color: var(--fb-red);
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  .card {
+    margin: 10px 0;
+    min-width: 500px;
+
+
+    .card-content {
+      display: flex;
+      align-items: center;
+
+      .card-left {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+      }
+    }
+  }
 }
 
 .ride-info {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
+  gap: 10px;
 
   .date {
     flex: 1;
@@ -20,8 +88,43 @@
     flex-direction: column;
   }
   .distance {
-    font-weight: 500;
-    font-size: 16px;
+    position: relative;
+    flex: 1;
+    text-align: center;
+
+    &::before {
+      content: '';
+      height: 2px;
+      left:0;
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      background-color: var(--mat-sys-on-surface);
+    }
+
+    div {
+      position: relative;
+      background-color: var(--mdc-outlined-card-container-color, var(--mat-sys-surface));
+      display: inline-block;
+      padding: 10px;
+    }
+    
+  }
+
+  .location {
+    display: flex;
+    flex-direction: column;
+    width: 120px;
+
+    &.departure {
+      align-items: flex-end;
+      text-align: end;
+    }
+
+    &.arrival {
+      align-items: flex-start;
+      text-align: start;
+    }
   }
 }
 
@@ -31,4 +134,9 @@
   top: 7px;
   right: 10px;
   font-size: 12px;
+}
+
+.ride-name {
+  font: var(--mat-sys-title-medium);
+  margin-bottom: 10px;
 }

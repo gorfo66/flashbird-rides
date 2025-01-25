@@ -8,11 +8,13 @@ import { Log, Ride } from '../models';
 })
 export class ElevationService {
 
+  private readonly activated = false;
+
   constructor(private httpClient: HttpClient) { }
 
 
   public getElevations(logs: Log[] | undefined): Observable<Log[]> {
-    if (!!logs) {
+    if (this.activated && !!logs) {
       return this.httpClient.post(
         'https://api.open-elevation.com/api/v1/lookup',
         JSON.stringify({
@@ -43,7 +45,7 @@ export class ElevationService {
       )
     }
 
-    return of([]);
+    return of(logs || []);
   }
 
 }

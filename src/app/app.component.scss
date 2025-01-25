@@ -9,14 +9,14 @@ header {
 }
 
 .waiting {
-  position: absolute;
+  position: fixed;
   z-index: 99999;
   display: none;
   background: #000000CC; 
   top: 0;
   right: 0;
   left: 0;
-  bottom: 0;
+  height: 100%;
   display: none;
   align-items: center;
   justify-content: center;

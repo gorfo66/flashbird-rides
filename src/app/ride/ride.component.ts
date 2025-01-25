@@ -4,6 +4,7 @@ import { Log, Ride } from '../../models';
 import { Store } from '@ngrx/store';
 import { selectRide } from '../../store';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
+import { average, interpolate } from '../../helpers';
 
 @Component({
   selector: 'app-ride-',
@@ -40,7 +41,8 @@ export class RideComponent implements AfterViewInit, OnDestroy {
     this.averageSpeed$ = this.ride$.pipe(
       filter((ride) => !!ride.logs),
       map(getSpeedArray),
-      map(average)
+      map(average),
+      map(Math.floor)
     );
 
     this.maxSpeed$ = this.ride$.pipe(
@@ -52,7 +54,8 @@ export class RideComponent implements AfterViewInit, OnDestroy {
     this.averageTilt$ = this.ride$.pipe(
       filter((ride) => !!ride.logs),
       map(getTiltArray),
-      map(average)
+      map(average),
+      map(Math.floor)
     );
 
     this.maxTilt$ = this.ride$.pipe(
@@ -113,6 +116,8 @@ export class RideComponent implements AfterViewInit, OnDestroy {
     const style = getComputedStyle(document.body);
     const color = style.getPropertyValue('--fb-red');
 
+    const interpolatedLogs = interpolate(logs);
+
     const config: ChartConfiguration = {
       type: 'line',
       data: {
@@ -165,7 +170,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
       fill: true,
       backgroundColor: '#EEEEEE',
       borderColor: '#EEEEEE',
-      data: logs.map((log: Log) => {
+      data: interpolatedLogs.map((log: Log) => {
         return {
           x: log.distance / 1000,
           y: log.altitude
@@ -180,7 +185,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
           {
             ...dataSetDefaultConfig,
             label: 'Speed',
-            data: logs.map((log: Log) => {
+            data: interpolatedLogs.map((log: Log) => {
               return {
                 x: log.distance / 1000,
                 y: log.speed
@@ -198,7 +203,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
           {
             ...dataSetDefaultConfig,
             label: 'Tilt',
-            data: logs.map((log: Log) => {
+            data: interpolatedLogs.map((log: Log) => {
               return {
                 x: log.distance / 1000,
                 y: log.tilt
@@ -219,14 +224,6 @@ const getSpeedArray = (ride: Ride): number[] | undefined => {
 
 const getTiltArray = (ride: Ride): number[] | undefined => {
   return ride.logs?.map(log => log.tilt);
-}
-
-const average = (arr: number[] | undefined): number => {
-  if (!!arr) {
-    return Math.floor(arr.reduce((a, b) => { return a + b }, 0) / arr.length);
-  }
-
-  return NaN
 }
 
 const max = (arr: number[] | undefined): number => {

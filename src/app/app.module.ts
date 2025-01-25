@@ -12,6 +12,7 @@ import { RidesModule } from './rides';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { LoginModule } from './login/login.module';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { MAT_CARD_CONFIG } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
   providers: [
     httpInterceptorProviders,
     provideAnimationsAsync(),
-    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline', floatLabel: 'always'}}
+    {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline', floatLabel: 'always'}},
+    {provide: MAT_CARD_CONFIG, useValue : {appearance: 'outlined'}}
   ],
   bootstrap: [AppComponent]
 })

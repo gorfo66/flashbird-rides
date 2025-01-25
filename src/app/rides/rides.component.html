@@ -1,31 +1,48 @@
 
 Total distance {{totalDistance$ | async}} km
 
-<div class = 'rides'>
-  <div class = 'ride' *ngFor="let ride of (rides$ | async)">
-    <mat-card>
-      <mat-card-header><h3>{{ride.name}}</h3></mat-card-header>
-      <mat-card-content>
-        <div class = 'ride-date'>
-          {{ride.startDate | date: 'dd MMMM yyyy'}}
-        </div>
-        <div class = 'ride-info'>
 
-          <div class = 'date'>
-            <span class = 'departure'>{{ride.startDate | date: 'HH:mm'}} : {{ride.startLocation}}</span>
-            <span class = 'arrival'>{{ride.endDate | date: 'HH:mm'}} : {{ride.endLocation}}</span>
+<button mat-button (click)="filter(FilterType.all)">Show all</button>
+<button mat-button (click)="filter(FilterType.long)">Show long</button>
+
+<div class = 'timeline' *ngIf="(filteredRides$ | async) as rides">
+  <div class = 'rides'>
+    <div class = 'ride' *ngFor="let ride of rides; index as i">
+
+      <div class = 'timeline-date'>
+        <ng-container *ngIf="i === 0 || (ride.startDate | date: 'ddMMM') !== (rides[i-1].startDate | date: 'ddMMM')">
+          <span class = 'day'>{{ride.startDate | date: 'dd'}}</span>
+          <span class = 'month'>{{ride.startDate | date: 'MMMM'}}</span>
+        </ng-container>
+        
+      </div>
+      
+      <div class = 'timeline-line' [ngClass]="{'with-date' : i === 0 || (ride.startDate | date: 'ddMMM') !== (rides[i-1].startDate | date: 'ddMMM')}"></div>
+
+      <mat-card class = 'card'>
+        <mat-card-content class = 'card-content'>
+          
+          <div class = 'card-left'>
+            <div class = 'ride-name'>{{ride.name}}</div>
+            <div class = 'ride-info'>
+
+                <div class = 'location departure'><span>{{ride.startDate | date: 'HH:mm'}}</span><span>{{ride.startLocation}}</span></div>
+                <div class = 'distance'>
+                  <div>{{formatDistance(ride.distance)}}</div>
+                </div>
+                <div class = 'location arrival'><span>{{ride.endDate | date: 'HH:mm'}}</span><span>{{ride.endLocation}}</span></div>
+              
+  
+            </div>
+          </div>
+
+          <div class = 'card-right'>
+            <a [routerLink]="['/ride', ride.id]" mat-button>Show</a>
           </div>
           
-          <div class = 'distance'>
-            {{formatDistance(ride.distance)}}
-          </div>
-
-        </div>
+        </mat-card-content>
         
-      </mat-card-content>
-      <mat-card-actions>
-        <a [routerLink]="['/ride', ride.id]" mat-button>Show the ride</a>
-      </mat-card-actions>
-    </mat-card>
+      </mat-card>
+    </div>
   </div>
 </div>

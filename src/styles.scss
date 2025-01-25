@@ -2,16 +2,29 @@
 
 
 /* You can add global styles to this file, and also import other style files */
-html, body { height: 100%; background-color: var(--fb-background);}
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
+html, body { height: 100%;}
+body { margin: 0}
+
+body {
+  background: var(--fb-background);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+}
 
 
+.container {
+  width: 100%;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 
-
-html {
+:root {
   --fb-red: #ea2b1f;
   --fb-background: #F9F9F9;
+  --mat-sys-surface: #F9F9F9;
+
 
   @include mat.theme((
     color: mat.$red-palette,
@@ -20,15 +33,7 @@ html {
   ));
 
   @include mat.card-overrides((
-    elevated-container-color: #fff,
+    outlined-container-color: #fff,
+    outlined-container-shape: 10px 0,
   ));
-}
-
-
-
-.container {
-  width: 100%;
-  max-width: 1600px;
-  margin-left: auto;
-  margin-right: auto;
 }
