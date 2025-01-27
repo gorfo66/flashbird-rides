@@ -77,4 +77,16 @@ export class RideService {
       )
     )
   }
+
+
+  public export(id: string): Observable<boolean> {
+    return this.httpClient.post(
+      flashbirdUrl, 
+      JSON.stringify({"query":"mutation ExportToGPX($exportToGpxId: ID!) { exportToGPX(id: $exportToGpxId) }","variables":{"exportToGpxId": id},"operationName":"ExportToGPX"})
+    ).pipe(
+      map((response:any) => {
+        return response.data?.exportToGPX
+      })
+    )
+  }
 }

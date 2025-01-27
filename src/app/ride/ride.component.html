@@ -2,7 +2,10 @@
   <h1>{{ride.name}}</h1>
   <div>{{ride.startDate}}</div>
 
-
+  <div class = 'actions-container'>
+    <button mat-button (click)="export(ride.id)">Export to GPX</button>
+  </div>
+  
 
   <div #map style="height: 500px"></div>
 

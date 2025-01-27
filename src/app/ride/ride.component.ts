@@ -1,10 +1,12 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { distinctUntilChanged, filter, map, Observable, Subscription } from 'rxjs';
+import { distinctUntilChanged, filter, map, Observable, Subscription, take } from 'rxjs';
 import { Log, Ride } from '../../models';
 import { Store } from '@ngrx/store';
 import { selectRide } from '../../store';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
-import { average, interpolate } from '../../helpers';
+import { average, getSpeedArray, getTiltArray, interpolate, max } from '../../helpers';
+import { RideService } from '../../services';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-ride-',
@@ -33,7 +35,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
   @ViewChild('tiltChart')
   tiltChart: ElementRef | undefined;
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private rideService: RideService, private snackBar: MatSnackBar) {
     this.ride$ = this.store.select(selectRide).pipe(
       distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
     );
@@ -48,7 +50,8 @@ export class RideComponent implements AfterViewInit, OnDestroy {
     this.maxSpeed$ = this.ride$.pipe(
       filter((ride) => !!ride.logs),
       map(getSpeedArray),
-      map(max)
+      map(max),
+      map(Math.floor)
     );
 
     this.averageTilt$ = this.ride$.pipe(
@@ -61,7 +64,8 @@ export class RideComponent implements AfterViewInit, OnDestroy {
     this.maxTilt$ = this.ride$.pipe(
       filter((ride) => !!ride.logs),
       map(getTiltArray),
-      map(max)
+      map(max),
+      map(Math.floor)
     );
   }
 
@@ -215,21 +219,20 @@ export class RideComponent implements AfterViewInit, OnDestroy {
       }
     });
   }
-}
-
-const getSpeedArray = (ride: Ride): number[] | undefined => {
-  return ride.logs?.map(log => log.speed);
-}
 
 
-const getTiltArray = (ride: Ride): number[] | undefined => {
-  return ride.logs?.map(log => log.tilt);
-}
-
-const max = (arr: number[] | undefined): number => {
-  if (!!arr) {
-    return Math.floor(Math.max(...arr));
+  public export(id: string) {
+    this.subscriptions.push(
+      this.rideService.export(id).pipe(take(1)).subscribe(
+        result => {
+          // Simple message.
+          if (result) {
+            this.snackBar.open('Ride has been sent to your email', undefined, {
+              duration: 3000
+            });
+          }          
+        }
+      )
+    )
   }
-
-  return NaN
 }

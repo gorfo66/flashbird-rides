@@ -1,4 +1,4 @@
-import { Log } from "../models";
+import { Log, Ride } from "../models";
 
 export const average = (arr: number[] | undefined): number => {
   if (!!arr) {
@@ -66,4 +66,22 @@ export const distanceInKmBetweenEarthCoordinates = (log1: Log, log2: Log) => {
 
 export const degreesToRadians = (degrees: number) => {
   return degrees * Math.PI / 180;
+}
+
+
+export const getSpeedArray = (ride: Ride): number[] | undefined => {
+  return ride.logs?.map(log => log.speed);
+}
+
+export const getTiltArray = (ride: Ride): number[] | undefined => {
+  return ride.logs?.map(log => log.tilt);
+}
+
+
+export const max = (arr: number[] | undefined): number => {
+  if (!!arr) {
+    return Math.max(...arr);
+  }
+
+  return NaN
 }
