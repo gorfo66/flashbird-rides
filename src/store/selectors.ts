@@ -1,7 +1,7 @@
 import { createFeatureSelector } from "@ngrx/store";
-import { Ride } from "../models";
+import { Ride, UiState } from "../models";
 
 export const selectRides = createFeatureSelector<Ride[]>('rides');
 export const selectRide = createFeatureSelector<Ride>('ride');
 export const selectToken = createFeatureSelector<string>('token');
-export const selectPendingState = createFeatureSelector<boolean>('pendingState');
+export const selectUiState = createFeatureSelector<UiState>('uiState');

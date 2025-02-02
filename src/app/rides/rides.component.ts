@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectRides } from '../../store';
+import { selectRides, selectUiState, upsertUiState } from '../../store';
 import { BehaviorSubject, combineLatest, map, Observable, Subscription } from 'rxjs';
 import { Ride } from '../../models';
 
@@ -24,17 +24,16 @@ export class RidesComponent implements AfterViewInit, OnDestroy {
   public rides$: Observable<Ride[]>;
   public filteredRides$: Observable<Ride[]>;
   public totalDistance$: Observable<number>;
-
-  private filterSubject = new BehaviorSubject<FilterType>(FilterType.all);
-
+ 
   constructor(private store: Store) {
     this.rides$ = this.store.select(selectRides);
+
     this.filteredRides$ = combineLatest([
       this.store.select(selectRides),
-      this.filterSubject.asObservable()
+      this.store.select(selectUiState).pipe(map((uiState) => uiState.filter))
     ]).pipe(
       map( ([rides, filterType]) => {
-        return rides.filter((ride) => filterType === FilterType.all || ride.distance > 150000);
+        return rides.filter((ride) => filterType === FilterType.all || ride.distance > 100000);
       })
     );
     this.totalDistance$ = this.rides$.pipe(map((rides) => Math.floor(rides.reduce((a, b) => a + b.distance, 0) / 1000)))
@@ -53,7 +52,7 @@ export class RidesComponent implements AfterViewInit, OnDestroy {
   }
 
   public filter(type: FilterType):void {
-    this.filterSubject.next(type);
+    this.store.dispatch(upsertUiState({uiState : { filter: type}}));
   }
 
   get FilterType() {

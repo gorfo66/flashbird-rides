@@ -1,6 +1,6 @@
 import { ActionReducer, createReducer, INIT, on } from '@ngrx/store';
-import { upsertAuthToken, upsertPendingState, upsertRide, upsertRides } from './actions';
-import { Ride } from '../models';
+import { upsertAuthToken, upsertRide, upsertRides, upsertUiState } from './actions';
+import { Ride, UiState } from '../models';
 import { Action } from 'rxjs/internal/scheduler/Action';
 import { merge } from 'rxjs';
 
@@ -19,9 +19,15 @@ export const tokenReducer = createReducer<string | undefined>(
   on(upsertAuthToken, (_state, { token }) => token)
 );
 
-export const pendingStateReducer = createReducer<boolean>(
-  false,
-  on(upsertPendingState, (_state, { isPending }) => isPending)
+export const uiStateReducer = createReducer<UiState>(
+  {
+    isPending: false,
+    filter: 'all'
+  },
+  on(upsertUiState, (state, { uiState }) => ({
+    ...state,
+    ...uiState
+  }))
 );
 
 export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
@@ -40,7 +46,11 @@ export const hydrationMetaReducer = (
       const token = localStorage.getItem("token");
       if (token) {
         return {
-          token 
+          token,
+          uiState: {
+            isPending: false,
+            filter: 'all'
+          }
         }
       }
     }
@@ -57,7 +67,7 @@ export const reducers = {
   rides: ridesReducer, 
   ride: rideReducer, 
   token: tokenReducer,
-  pendingState: pendingStateReducer
+  uiState: uiStateReducer
 }
 
 export const metaReducers = [ hydrationMetaReducer ];

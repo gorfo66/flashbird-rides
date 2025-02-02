@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { Ride } from "../models";
+import { Ride, UiState } from "../models";
 
 export const upsertAuthToken = createAction(
   '[Auth] Upsert token',
@@ -16,7 +16,7 @@ export const upsertRide = createAction(
   props<{ ride: Ride }>()
 );
 
-export const upsertPendingState = createAction(
-  '[Pending] upsert state',
-  props<{ isPending: boolean }>()
+export const upsertUiState = createAction(
+  '[Ui] upsert state',
+  props<{ uiState: UiState }>()
 );
