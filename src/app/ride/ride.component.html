@@ -1,22 +1,52 @@
 <ng-container *ngIf="(ride$ | async) as ride">
-  <h1>{{ride.name}}</h1>
-  <div>{{ride.startDate}}</div>
 
-  <div class = 'actions-container'>
-    <button mat-button (click)="export(ride.id)">Export to GPX</button>
+  <div role="presentation" class = 'top'>
+    <div>
+      <h1>{{ride.name}}</h1>
+      <div>{{ride.startDate | date:'EEEE dd MMMM yyyy'}}</div>
+    </div>
+
+    <div class = 'actions-container'>
+      <button mat-button (click)="back()">Back</button>
+      <button mat-button (click)="export(ride.id)">Export to GPX</button>
+    </div>
+
+  </div>
+  
+  <div class = 'statistics-container'>
+    <div class = 'statistic'>
+      <div class = 'label'>Average speed</div>
+      <div class = 'value'>
+        <div class = 'amount'>{{averageSpeed$ | async}}</div>
+        <div class = 'unit'>km/h</div>
+      </div>
+      
+    </div>
+
+    <div class = 'statistic'>
+      <div class = 'label'>Max speed</div>
+      <div class = 'value'>
+        <div class = 'amount'>{{maxSpeed$ | async}}</div>
+        <div class = 'unit'>km/h</div>
+      </div>
+    </div>
+
+    <div class = 'statistic'>
+      <div class = 'label'>Max tilt</div>
+      <div class = 'value'>
+        <div class = 'amount'>{{maxTilt$ | async}}</div>
+        <div class = 'unit'>degrés</div>
+      </div>
+    </div>
+    
   </div>
   
 
   <div #map style="height: 500px"></div>
+  
 
-  <h2>Speed</h2>
-  <div>Average speed: {{averageSpeed$ | async}} km/h</div>
-  <div>Max speed : {{maxSpeed$ | async }} km/h</div>
   <canvas #speedChart></canvas>
 
-  <h2>Tilt</h2>
-  <div>Average tilt: {{averageTilt$ | async}}°</div>
-  <div>Max tilt : {{maxTilt$ | async }}°</div>
   <canvas #tiltChart></canvas>
 
 </ng-container>

@@ -7,6 +7,7 @@ import Chart, { ChartConfiguration } from 'chart.js/auto';
 import { average, getSpeedArray, getTiltArray, interpolate, max } from '../../helpers';
 import { RideService } from '../../services';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ride-',
@@ -35,7 +36,10 @@ export class RideComponent implements AfterViewInit, OnDestroy {
   @ViewChild('tiltChart')
   tiltChart: ElementRef | undefined;
 
-  constructor(private store: Store, private rideService: RideService, private snackBar: MatSnackBar) {
+  constructor(private store: Store, 
+    private rideService: RideService, 
+    private snackBar: MatSnackBar,
+    private router: Router) {
     this.ride$ = this.store.select(selectRide).pipe(
       distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
     );
@@ -101,15 +105,70 @@ export class RideComponent implements AfterViewInit, OnDestroy {
 
 
     // Create the path
-    const toUnion = logs.map((x) => {
-      return [
-        x.latitude,
-        x.longitude
-      ]
-    });
+    // const toUnion = logs.map((x) => {
+    //   return [
+    //     x.latitude,
+    //     x.longitude
+    //   ]
+    // });
 
-    const path = L.polyline(toUnion, { color: 'var(--fb-red)', opacity: 1, weight: 5});
-    path.addTo(map);
+    // const path = L.polyline(toUnion, { color: 'var(--fb-red)', opacity: 1, weight: 5});
+    // path.addTo(map);
+
+
+    const states = logs.map((log, index) => {
+      const next = logs[index + 1];
+      if (next) {
+        return {
+          type: 'Feature',
+          properties: {
+            speed: log.speed
+          },
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[
+              [log.longitude, log.latitude],
+              [next.longitude, next.latitude]
+            ]]
+          }
+        }
+      }
+
+      return undefined;
+    }).filter(e => !!e);
+
+    console.log(states);
+
+    const path = L.geoJson(states, {
+      style: function(feature: any) {
+        const speed = feature.properties.speed;
+        const defaultStyle = {
+          weight: 5
+        }
+        if (speed > 90) {
+          return {
+            ...defaultStyle,
+            color: 'red'
+          };
+        }
+
+        if (speed > 50) {
+          return {
+            ...defaultStyle,
+            color: 'darkorange'
+          };
+        }
+        
+        return {
+          ...defaultStyle,
+          color: 'blue'
+        }
+
+      }
+      });
+   
+      path.addTo(map);
+
     map.fitBounds(path.getBounds());
 
   }
@@ -136,6 +195,10 @@ export class RideComponent implements AfterViewInit, OnDestroy {
         plugins: {
           legend: {
             display: false
+          },
+          title: {
+            display: true,
+            text: 'Custom Chart Title'
           }
         },
 
@@ -182,8 +245,12 @@ export class RideComponent implements AfterViewInit, OnDestroy {
       })
     }
 
+    const speedConfig = {
+      ...config
+    }
+    speedConfig.options!.plugins!.title!.text = 'Speed';
     new Chart(this.speedChart?.nativeElement, {
-      ...config,
+      ...speedConfig,
       data: {
         datasets: [
           {
@@ -200,8 +267,12 @@ export class RideComponent implements AfterViewInit, OnDestroy {
       }
     });
 
+    const tiltConfig = {
+      ...config
+    }
+    tiltConfig.options!.plugins!.title!.text = 'Tilt';
     new Chart(this.tiltChart?.nativeElement, {
-      ...config,
+      ...tiltConfig,
       data: {
         datasets: [
           {
@@ -234,5 +305,9 @@ export class RideComponent implements AfterViewInit, OnDestroy {
         }
       )
     )
+  }
+
+  public back() {
+    this.router.navigate(['rides']);
   }
 }
