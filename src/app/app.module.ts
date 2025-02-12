@@ -1,4 +1,4 @@
-import { NgModule, isDevMode } from '@angular/core';
+import { LOCALE_ID, NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -31,7 +31,8 @@ import { MAT_CARD_CONFIG } from '@angular/material/card';
     httpInterceptorProviders,
     provideAnimationsAsync(),
     {provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline', floatLabel: 'always'}},
-    {provide: MAT_CARD_CONFIG, useValue : {appearance: 'outlined'}}
+    {provide: MAT_CARD_CONFIG, useValue : {appearance: 'outlined'}},
+    { provide: LOCALE_ID, useValue: 'fr-FR'}
   ],
   bootstrap: [AppComponent]
 })

@@ -1,3 +1,9 @@
+$timeline-color: var(--mat-sys-primary);
+
+.filter-container {
+  margin: 20px 0;
+}
+
 .timeline {
   display: flex;
   align-items: center;
@@ -20,7 +26,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: var(--fb-red);
+    color: $timeline-color;
     width: 65px;
     flex-shrink: 0;
     flex-grow: 0;
@@ -46,7 +52,7 @@
       top:0;
       left: 50%;
       bottom: 0;
-      background-color: var(--fb-red);
+      background-color: $timeline-color;
       transform: translateX(-50%);
     }
 
@@ -58,7 +64,7 @@
       left: 50%;
       top: 50%;
       border-radius: 100%;
-      background-color: var(--fb-red);
+      background-color: $timeline-color;
       transform: translate(-50%, -50%);
     }
   }

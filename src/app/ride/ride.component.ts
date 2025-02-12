@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { distinctUntilChanged, filter, map, Observable, Subscription, take } from 'rxjs';
+import { combineLatest, distinctUntilChanged, filter, map, Observable, Subscription, take } from 'rxjs';
 import { Log, Ride } from '../../models';
 import { Store } from '@ngrx/store';
 import { selectRide } from '../../store';
@@ -21,9 +21,9 @@ export class RideComponent implements AfterViewInit, OnDestroy {
   public ride$: Observable<Ride>;
   public averageSpeed$: Observable<number>;
   public maxSpeed$: Observable<number>;
-
-  public averageTilt$: Observable<number>;
   public maxTilt$: Observable<number>;
+  public drivingDuration$: Observable<number>;
+  public pauseDuration$: Observable<number>;
 
   private subscriptions: Subscription[] = [];
 
@@ -58,19 +58,45 @@ export class RideComponent implements AfterViewInit, OnDestroy {
       map(Math.floor)
     );
 
-    this.averageTilt$ = this.ride$.pipe(
-      filter((ride) => !!ride.logs),
-      map(getTiltArray),
-      map(average),
-      map(Math.floor)
-    );
-
     this.maxTilt$ = this.ride$.pipe(
       filter((ride) => !!ride.logs),
       map(getTiltArray),
       map(max),
       map(Math.floor)
     );
+
+
+    this.drivingDuration$ = this.ride$.pipe(
+      filter((ride) => !!ride.logs),
+      map((ride) => ride.logs),
+      map((logs) => {
+        let duration = 0;
+        logs?.forEach((log, index) => {
+          const next = logs[index + 1];
+          if (next) {
+
+            const hasMoved = (next.distance - log.distance) > 2; // less than 2 meters, considers that we did not yet move
+            if (hasMoved) {
+              duration += (next.gpsTimestamp - log.gpsTimestamp);
+            }
+            else {
+              console.log('did not move');
+            }
+            
+          }
+
+        });
+
+        return Math.floor(duration);
+      })
+    )
+
+    this.pauseDuration$ = combineLatest([
+      this.ride$.pipe(map((ride) => Math.floor((ride.endDate.getTime() - ride.startDate.getTime())))),
+      this.drivingDuration$
+    ]).pipe(map(([totalDuration, drivingDuration]) => {
+      return totalDuration - drivingDuration;
+    }))
   }
 
 
@@ -86,7 +112,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
         this.createMap(logs!);
         this.createCharts(logs!);
       })
-    )
+    );
   }
 
 
@@ -102,19 +128,6 @@ export class RideComponent implements AfterViewInit, OnDestroy {
       minZoom: 1,
       maxZoom: 20
     }).addTo(map);
-
-
-    // Create the path
-    // const toUnion = logs.map((x) => {
-    //   return [
-    //     x.latitude,
-    //     x.longitude
-    //   ]
-    // });
-
-    // const path = L.polyline(toUnion, { color: 'var(--fb-red)', opacity: 1, weight: 5});
-    // path.addTo(map);
-
 
     const states = logs.map((log, index) => {
       const next = logs[index + 1];
@@ -136,8 +149,6 @@ export class RideComponent implements AfterViewInit, OnDestroy {
 
       return undefined;
     }).filter(e => !!e);
-
-    console.log(states);
 
     const path = L.geoJson(states, {
       style: function(feature: any) {
@@ -177,7 +188,12 @@ export class RideComponent implements AfterViewInit, OnDestroy {
 
   private createCharts(logs: Log[]) {
     const style = getComputedStyle(document.body);
-    const color = style.getPropertyValue('--fb-red');
+    const lightDarkColor = style.getPropertyValue('--mat-sys-primary');
+    const colorSplit = lightDarkColor.match(/^light-dark\((.*)\,(.*)\)$/);
+    const color = colorSplit![1];
+
+    console.log(color);
+    
 
     const interpolatedLogs = interpolate(logs);
 
@@ -223,9 +239,24 @@ export class RideComponent implements AfterViewInit, OnDestroy {
     const dataSetDefaultConfig = {
       cubicInterpolationMode: 'monotone',
       tension: 0.5,
+      borderWidth: 1,
       borderColor: color,
-      backgroundColor: color,
-      fill: false,
+      backgroundColor: function(context: any) {
+        const chart = context.chart;
+        const {ctx, chartArea} = chart;
+
+        if (!chartArea) {
+          // This case happens on initial chart load
+          return;
+        }
+
+        const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+        gradient.addColorStop(1, color);
+        gradient.addColorStop(0, color + '30');
+
+        return gradient;
+      },
+      fill: true,
       yAxisID: 'mainY',
     }
 
@@ -248,7 +279,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
     const speedConfig = {
       ...config
     }
-    speedConfig.options!.plugins!.title!.text = 'Speed';
+    speedConfig.options!.plugins!.title!.text = 'Vitesse';
     new Chart(this.speedChart?.nativeElement, {
       ...speedConfig,
       data: {
@@ -270,7 +301,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
     const tiltConfig = {
       ...config
     }
-    tiltConfig.options!.plugins!.title!.text = 'Tilt';
+    tiltConfig.options!.plugins!.title!.text = 'Angle';
     new Chart(this.tiltChart?.nativeElement, {
       ...tiltConfig,
       data: {
@@ -296,7 +327,6 @@ export class RideComponent implements AfterViewInit, OnDestroy {
     this.subscriptions.push(
       this.rideService.export(id).pipe(take(1)).subscribe(
         result => {
-          // Simple message.
           if (result) {
             this.snackBar.open('Ride has been sent to your email', undefined, {
               duration: 3000
@@ -309,5 +339,9 @@ export class RideComponent implements AfterViewInit, OnDestroy {
 
   public back() {
     this.router.navigate(['rides']);
+  }
+
+  public get Math() {
+    return Math;
   }
 }

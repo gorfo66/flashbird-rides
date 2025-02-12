@@ -14,8 +14,7 @@ export const average = (arr: number[] | undefined): number => {
 export const interpolate = (logs: Log[]): Log[] => {
   const step = Math.floor(logs.length / 500);
 
-  console.log(logs.length, step);
-  if (step <= 1) {
+  if (step <= 1 || true) {
     return logs;
   }
 
@@ -39,7 +38,6 @@ export const interpolate = (logs: Log[]): Log[] => {
 
   newlogs.push(logs[logs.length - 1]);
 
-  console.log(newlogs.length);
   return newlogs;
 }
 

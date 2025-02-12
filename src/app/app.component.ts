@@ -18,9 +18,6 @@ export class AppComponent implements OnInit {
   constructor(private store: Store) {
     this.isPending$ = this.store.select(selectUiState).pipe(
       map((uiState) => uiState?.isPending || false));
-
-
-      this.isPending$.subscribe(a => console.log(a));
   }
 
   ngOnInit(): void {

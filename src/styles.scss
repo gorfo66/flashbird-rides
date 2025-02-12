@@ -24,8 +24,7 @@ body {
 :root {
   --fb-red: #ea2b1f;
   --fb-background: #F9F9F9;
-  --mat-sys-surface: #F9F9F9;
-
+  --mat-sys-surface: var(--fb-background);
 
   @include mat.theme((
     color: mat.$red-palette,
@@ -36,5 +35,11 @@ body {
   @include mat.card-overrides((
     outlined-container-color: #fff,
     outlined-container-shape: 10px,
+  ));
+
+  @include mat.button-toggle-overrides((
+    text-color: var(--mat-sys-primary),
+    selected-state-text-color: var(--mat-sys-primary),
+    divider-color: transparent
   ));
 }

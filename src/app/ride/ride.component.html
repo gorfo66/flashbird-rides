@@ -7,15 +7,39 @@
     </div>
 
     <div class = 'actions-container'>
-      <button mat-button (click)="back()">Back</button>
-      <button mat-button (click)="export(ride.id)">Export to GPX</button>
+      <button mat-button (click)="back()">Retour</button>
+      <button mat-button (click)="export(ride.id)">Exporter en GPX</button>
     </div>
 
   </div>
   
   <div class = 'statistics-container'>
     <div class = 'statistic'>
-      <div class = 'label'>Average speed</div>
+      <div class = 'label'>Distance</div>
+      <div class = 'value'>
+        <div class = 'amount'>{{Math.floor(ride.distance / 1000)}}</div>
+        <div class = 'unit'>km</div>
+      </div>
+    </div>
+    
+    <div class = 'statistic'>
+      <div class = 'label'>Durée de route</div>
+      <div class = 'value'>
+        <div class = 'amount'>{{(drivingDuration$ | async) | date: 'HH:mm':'UTC'}}</div>
+        <div class = 'unit'></div>
+      </div>
+    </div>
+
+    <div class = 'statistic'>
+      <div class = 'label'>Durée de pause</div>
+      <div class = 'value'>
+        <div class = 'amount'>{{(pauseDuration$ | async) | date: 'HH:mm':'UTC'}}</div>
+        <div class = 'unit'></div>
+      </div>
+    </div>
+
+    <div class = 'statistic'>
+      <div class = 'label'>Vitesse moyenne</div>
       <div class = 'value'>
         <div class = 'amount'>{{averageSpeed$ | async}}</div>
         <div class = 'unit'>km/h</div>
@@ -24,7 +48,7 @@
     </div>
 
     <div class = 'statistic'>
-      <div class = 'label'>Max speed</div>
+      <div class = 'label'>Vitesse maxi</div>
       <div class = 'value'>
         <div class = 'amount'>{{maxSpeed$ | async}}</div>
         <div class = 'unit'>km/h</div>
@@ -32,7 +56,7 @@
     </div>
 
     <div class = 'statistic'>
-      <div class = 'label'>Max tilt</div>
+      <div class = 'label'>Angle maxi</div>
       <div class = 'value'>
         <div class = 'amount'>{{maxTilt$ | async}}</div>
         <div class = 'unit'>degrés</div>
