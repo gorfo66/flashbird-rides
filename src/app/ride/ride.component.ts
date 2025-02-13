@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { combineLatest, distinctUntilChanged, filter, map, Observable, Subscription, take } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, Subscription, take } from 'rxjs';
 import { Log, Ride } from '../../models';
 import { Store } from '@ngrx/store';
 import { selectRide } from '../../store';
@@ -8,6 +8,11 @@ import { average, getSpeedArray, getTiltArray, interpolate, max } from '../../he
 import { RideService } from '../../services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
+
+// @ts-ignore
+import * as L from "leaflet/dist/leaflet-src.esm";
+
 
 @Component({
   selector: 'app-ride-',
@@ -16,7 +21,7 @@ import { Router } from '@angular/router';
   templateUrl: './ride.component.html',
   styleUrl: './ride.component.scss'
 })
-export class RideComponent implements AfterViewInit, OnDestroy {
+export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public ride$: Observable<Ride>;
   public averageSpeed$: Observable<number>;
@@ -24,17 +29,22 @@ export class RideComponent implements AfterViewInit, OnDestroy {
   public maxTilt$: Observable<number>;
   public drivingDuration$: Observable<number>;
   public pauseDuration$: Observable<number>;
+  public interpolateCheckbox = new FormControl()
+  
 
   private subscriptions: Subscription[] = [];
+  private interpolation = new BehaviorSubject<boolean>(false);
+  private speedChartInstance: any;
+  private tiltChartInstance: any;
 
   @ViewChild('map')
-  map: ElementRef | undefined;
+  private map: ElementRef | undefined;
 
   @ViewChild('speedChart')
-  speedChart: ElementRef | undefined;
+  private speedChart: ElementRef | undefined;
 
   @ViewChild('tiltChart')
-  tiltChart: ElementRef | undefined;
+  private tiltChart: ElementRef | undefined;
 
   constructor(private store: Store, 
     private rideService: RideService, 
@@ -48,23 +58,22 @@ export class RideComponent implements AfterViewInit, OnDestroy {
       filter((ride) => !!ride.logs),
       map(getSpeedArray),
       map(average),
-      map(Math.floor)
+      map(Math.round)
     );
 
     this.maxSpeed$ = this.ride$.pipe(
       filter((ride) => !!ride.logs),
       map(getSpeedArray),
       map(max),
-      map(Math.floor)
+      map(Math.round)
     );
 
     this.maxTilt$ = this.ride$.pipe(
       filter((ride) => !!ride.logs),
       map(getTiltArray),
       map(max),
-      map(Math.floor)
+      map(Math.round)
     );
-
 
     this.drivingDuration$ = this.ride$.pipe(
       filter((ride) => !!ride.logs),
@@ -74,31 +83,35 @@ export class RideComponent implements AfterViewInit, OnDestroy {
         logs?.forEach((log, index) => {
           const next = logs[index + 1];
           if (next) {
-
             const hasMoved = (next.distance - log.distance) > 2; // less than 2 meters, considers that we did not yet move
             if (hasMoved) {
               duration += (next.gpsTimestamp - log.gpsTimestamp);
             }
             else {
               console.log('did not move');
-            }
-            
+            }            
           }
-
         });
 
-        return Math.floor(duration);
+        return Math.round(duration);
       })
     )
 
     this.pauseDuration$ = combineLatest([
-      this.ride$.pipe(map((ride) => Math.floor((ride.endDate.getTime() - ride.startDate.getTime())))),
+      this.ride$.pipe(map((ride) => Math.round((ride.endDate.getTime() - ride.startDate.getTime())))),
       this.drivingDuration$
     ]).pipe(map(([totalDuration, drivingDuration]) => {
       return totalDuration - drivingDuration;
-    }))
+    }));    
   }
 
+  ngOnInit(): void {
+    this.subscriptions.push(
+      this.interpolateCheckbox.valueChanges.subscribe((change) => {
+        this.interpolation.next(change);
+      })
+    );    
+  }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(value => value.unsubscribe());
@@ -110,14 +123,21 @@ export class RideComponent implements AfterViewInit, OnDestroy {
         map((ride) => ride.logs)
       ).subscribe((logs) => {
         this.createMap(logs!);
-        this.createCharts(logs!);
+      })
+    );
+    
+    this.subscriptions.push(
+      combineLatest([
+        this.ride$.pipe(map((ride) => ride.logs)),
+        this.interpolation.asObservable()
+      ]).subscribe(([logs, interpolation]) => {
+        this.createCharts(logs!, interpolation);
       })
     );
   }
 
 
   private createMap(logs: Log[]) {
-    const L = (window as any).L;
 
     const lat = logs[0].latitude;
     const lon = logs[0].longitude;
@@ -186,16 +206,28 @@ export class RideComponent implements AfterViewInit, OnDestroy {
 
 
 
-  private createCharts(logs: Log[]) {
+  private createCharts(logs: Log[], interpolation: boolean) {
+
+    // Workaround: when chart is re-created, chartjs scroll top.
+    // We keep current scroll position and reapply at the bottom
+    const currentPageScroll = document.body.scrollTop || window.scrollY;
+    
+    // destroy charts if exist
+    if (this.speedChartInstance) {
+      this.speedChartInstance.destroy();
+    }
+
+    if (this.tiltChartInstance) {
+      this.tiltChartInstance.destroy();
+    }
+
     const style = getComputedStyle(document.body);
     const lightDarkColor = style.getPropertyValue('--mat-sys-primary');
     const colorSplit = lightDarkColor.match(/^light-dark\((.*)\,(.*)\)$/);
     const color = colorSplit![1];
 
-    console.log(color);
     
-
-    const interpolatedLogs = interpolate(logs);
+    const interpolatedLogs = interpolation ? interpolate(logs) : logs;
 
     const config: ChartConfiguration = {
       type: 'line',
@@ -280,7 +312,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
       ...config
     }
     speedConfig.options!.plugins!.title!.text = 'Vitesse';
-    new Chart(this.speedChart?.nativeElement, {
+    this.speedChartInstance = new Chart(this.speedChart?.nativeElement, {
       ...speedConfig,
       data: {
         datasets: [
@@ -290,7 +322,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
             data: interpolatedLogs.map((log: Log) => {
               return {
                 x: log.distance / 1000,
-                y: log.speed
+                y: Math.round(log.speed)
               }
             })
           }, altitudeDataSet
@@ -302,7 +334,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
       ...config
     }
     tiltConfig.options!.plugins!.title!.text = 'Angle';
-    new Chart(this.tiltChart?.nativeElement, {
+    this.tiltChartInstance = new Chart(this.tiltChart?.nativeElement, {
       ...tiltConfig,
       data: {
         datasets: [
@@ -312,7 +344,7 @@ export class RideComponent implements AfterViewInit, OnDestroy {
             data: interpolatedLogs.map((log: Log) => {
               return {
                 x: log.distance / 1000,
-                y: log.tilt
+                y: Math.round(log.tilt)
               }
             })
           },
@@ -320,6 +352,10 @@ export class RideComponent implements AfterViewInit, OnDestroy {
         ]
       }
     });
+
+
+    // Scroll to previous position
+    window.scroll(0,currentPageScroll);
   }
 
 

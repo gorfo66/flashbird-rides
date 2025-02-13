@@ -21,10 +21,5 @@ ng serve
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
 
-## Deploy
-A docker image has been created to ease the deployment and a node task allow to compile the docker image and run it to the port 4400.
-
-
-
 ## Licencing
 This is a completely open source project, written just for fun.
