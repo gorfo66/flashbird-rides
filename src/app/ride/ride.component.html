@@ -1,87 +1,98 @@
 <ng-container *ngIf="(ride$ | async) as ride">
 
-  <div role="presentation" class = 'top'>
+  <div role="presentation" class='top'>
     <div>
       <h1>{{ride.name}}</h1>
       <div>{{ride.startDate | date:'EEEE dd MMMM yyyy'}}</div>
     </div>
 
-    <div class = 'actions-container'>
+    <div class='actions-container'>
       <button mat-button (click)="back()">Retour</button>
       <button mat-button (click)="export(ride.id)">Exporter en GPX</button>
     </div>
 
   </div>
-  
-  <div class = 'statistics-container'>
-    <div class = 'statistic'>
-      <div class = 'label'>Distance</div>
-      <div class = 'value'>
-        <div class = 'amount'>{{Math.round(ride.distance / 1000)}}</div>
-        <div class = 'unit'>km</div>
-      </div>
-    </div>
-    
-    <div class = 'statistic'>
-      <div class = 'label'>Durée de route</div>
-      <div class = 'value'>
-        <div class = 'amount'>{{(drivingDuration$ | async) | date: 'HH:mm':'UTC'}}</div>
-        <div class = 'unit'></div>
+
+  <div class='statistics-container'>
+    <div class='statistic'>
+      <div class='label'>Distance</div>
+      <div class='value'>
+        <div class='amount'>{{Math.round(ride.distance / 1000)}}</div>
+        <div class='unit'>km</div>
       </div>
     </div>
 
-    <div class = 'statistic'>
-      <div class = 'label'>Durée de pause</div>
-      <div class = 'value'>
-        <div class = 'amount'>{{(pauseDuration$ | async) | date: 'HH:mm':'UTC'}}</div>
-        <div class = 'unit'></div>
+    <div class='statistic'>
+      <div class='label'>Durée de route</div>
+      <div class='value'>
+        <div class='amount'>{{(drivingDuration$ | async) | date: 'HH:mm':'UTC'}}</div>
+        <div class='unit'></div>
       </div>
     </div>
 
-    <div class = 'statistic'>
-      <div class = 'label'>Vitesse moyenne</div>
-      <div class = 'value'>
-        <div class = 'amount'>{{averageSpeed$ | async}}</div>
-        <div class = 'unit'>km/h</div>
-      </div>
-      
-    </div>
-
-    <div class = 'statistic'>
-      <div class = 'label'>Vitesse maxi</div>
-      <div class = 'value'>
-        <div class = 'amount'>{{maxSpeed$ | async}}</div>
-        <div class = 'unit'>km/h</div>
+    <div class='statistic'>
+      <div class='label'>Durée de pause</div>
+      <div class='value'>
+        <div class='amount'>{{(pauseDuration$ | async) | date: 'HH:mm':'UTC'}}</div>
+        <div class='unit'></div>
       </div>
     </div>
 
-    <div class = 'statistic'>
-      <div class = 'label'>Angle maxi</div>
-      <div class = 'value'>
-        <div class = 'amount'>{{maxTilt$ | async}}</div>
-        <div class = 'unit'>degrés</div>
+    <div class='statistic'>
+      <div class='label'>Vitesse moyenne</div>
+      <div class='value'>
+        <div class='amount'>{{averageSpeed$ | async}}</div>
+        <div class='unit'>km/h</div>
+      </div>
+
+    </div>
+
+    <div class='statistic'>
+      <div class='label'>Vitesse maxi</div>
+      <div class='value'>
+        <div class='amount'>{{maxSpeed$ | async}}</div>
+        <div class='unit'>km/h</div>
       </div>
     </div>
-    
+
+    <div class='statistic'>
+      <div class='label'>Angle maxi</div>
+      <div class='value'>
+        <div class='amount'>{{maxTilt$ | async}}</div>
+        <div class='unit'>degrés</div>
+      </div>
+    </div>
+
   </div>
-  
+
 
   <div #map style="height: 500px"></div>
-  
-  <div class = 'graph-controls'>
+
+
+  <mat-chip-set class='speed-zones'>
+    <ng-container *ngFor="let zone of (speedZones$|async)">
+      <mat-chip [style.background-color]="getSpeedZoneColor(zone.zone)">
+        {{(zone.distance / ride.distance * 100).toFixed(1)}} %
+      </mat-chip>
+    </ng-container>
+  </mat-chip-set>
+
+
+  <div class='graph-controls'>
     <div>
       <mat-checkbox [formControl]="interpolateCheckbox" aria-label="Interpolation">
         Active l'interpolation
-        <div class = 'explanation' role="presentation">
-          Lorsque l'interpolation est activée et que le trajet comporte plus de 1000 points GPS, le système va n'afficher qu'environ 1000 points, en y attribuant une moyenne des valeurs des points intermédiaires.<br/>
+        <div class='explanation' role="presentation">
+          Lorsque l'interpolation est activée et que le trajet comporte plus de 1000 points GPS, le système va
+          n'afficher qu'environ 1000 points, en y attribuant une moyenne des valeurs des points intermédiaires.<br />
           Il en resultera un lissage des courbes mais une perte de précision sur les valeurs de crête.
         </div>
       </mat-checkbox>
     </div>
-    
+
   </div>
-  
-      
+
+
 
   <canvas #speedChart></canvas>
 

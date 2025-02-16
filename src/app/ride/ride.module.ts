@@ -8,6 +8,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
+import { MatChipsModule } from '@angular/material/chips';
+
 
 @NgModule({
   imports: [
@@ -17,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     MatCheckboxModule,
     MatInputModule,
+    MatChipsModule,
     ReactiveFormsModule],
   declarations: [RideComponent],
   providers: [RideGuard]

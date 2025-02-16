@@ -12,3 +12,11 @@ export interface Ride {
   distance: number;
   logs?: Log[];
 }
+
+
+export enum SpeedZone {
+  city,
+  road,
+  highway,
+  overlimit
+}

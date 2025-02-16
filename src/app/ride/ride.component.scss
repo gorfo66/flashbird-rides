@@ -19,8 +19,9 @@
 
 .statistics-container {
   display: flex;
-  gap: 40px;
+  gap: 20px 40px;
   margin: 20px 0;
+  flex-wrap: wrap;
 
   .label {
     font: var(--mat-sys-body-small);
@@ -44,4 +45,10 @@
   .explanation {
     font: var(--mat-sys-body-small);
   }
+}
+
+
+.speed-zones {
+  --mdc-chip-label-text-color: #fff;
+  --mdc-chip-outline-width: 0;
 }

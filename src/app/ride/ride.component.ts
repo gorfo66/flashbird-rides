@@ -1,18 +1,13 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, Subscription, take } from 'rxjs';
-import { Log, Ride } from '../../models';
+import { Log, Ride, SpeedZone } from '../../models';
 import { Store } from '@ngrx/store';
 import { selectRide } from '../../store';
-import Chart, { ChartConfiguration } from 'chart.js/auto';
-import { average, getSpeedArray, getTiltArray, interpolate, max } from '../../helpers';
+import { average, createCharts, createMap, getSpeedArray, getSpeedZone, getSpeedZoneInfo, getTiltArray, max } from '../../helpers';
 import { RideService } from '../../services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-
-// @ts-ignore
-import * as L from "leaflet/dist/leaflet-src.esm";
-
 
 @Component({
   selector: 'app-ride-',
@@ -29,13 +24,13 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
   public maxTilt$: Observable<number>;
   public drivingDuration$: Observable<number>;
   public pauseDuration$: Observable<number>;
+  public speedZones$: Observable<{ zone: SpeedZone; distance: number }[]>
   public interpolateCheckbox = new FormControl()
-  
+
 
   private subscriptions: Subscription[] = [];
   private interpolation = new BehaviorSubject<boolean>(false);
-  private speedChartInstance: any;
-  private tiltChartInstance: any;
+  private chartInstances: any;
 
   @ViewChild('map')
   private map: ElementRef | undefined;
@@ -46,8 +41,8 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('tiltChart')
   private tiltChart: ElementRef | undefined;
 
-  constructor(private store: Store, 
-    private rideService: RideService, 
+  constructor(private store: Store,
+    private rideService: RideService,
     private snackBar: MatSnackBar,
     private router: Router) {
     this.ride$ = this.store.select(selectRide).pipe(
@@ -89,7 +84,7 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
             }
             else {
               console.log('did not move');
-            }            
+            }
           }
         });
 
@@ -102,7 +97,37 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
       this.drivingDuration$
     ]).pipe(map(([totalDuration, drivingDuration]) => {
       return totalDuration - drivingDuration;
-    }));    
+    }));
+
+
+
+    this.speedZones$ = this.ride$.pipe(
+      filter((ride) => !!ride.logs),
+      map((ride) => ride.logs),
+      map((logs) => {
+        const output: { zone: SpeedZone; distance: number }[] = [];
+
+        logs?.forEach((log, index) => {
+          const next = logs[index + 1];
+          if (next) {
+            const distance = next.distance - log.distance;
+            const speedZone = getSpeedZone(log.speed);
+            const stat = output.find(e => e.zone === speedZone);
+            if (stat) {
+              stat.distance += distance;
+            }
+            else {
+              output.push({
+                zone: speedZone,
+                distance: distance
+              });
+            }
+          }
+        });
+
+        return output;
+      })
+    )
   }
 
   ngOnInit(): void {
@@ -110,7 +135,7 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
       this.interpolateCheckbox.valueChanges.subscribe((change) => {
         this.interpolation.next(change);
       })
-    );    
+    );
   }
 
   ngOnDestroy(): void {
@@ -125,7 +150,7 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
         this.createMap(logs!);
       })
     );
-    
+
     this.subscriptions.push(
       combineLatest([
         this.ride$.pipe(map((ride) => ride.logs)),
@@ -138,224 +163,27 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
   private createMap(logs: Log[]) {
-
-    const lat = logs[0].latitude;
-    const lon = logs[0].longitude;
-    const map = L.map(this.map!.nativeElement);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
-      attribution: null,
-      minZoom: 1,
-      maxZoom: 20
-    }).addTo(map);
-
-    const states = logs.map((log, index) => {
-      const next = logs[index + 1];
-      if (next) {
-        return {
-          type: 'Feature',
-          properties: {
-            speed: log.speed
-          },
-          geometry: {
-            type: 'Polygon',
-            coordinates: [[
-              [log.longitude, log.latitude],
-              [next.longitude, next.latitude]
-            ]]
-          }
-        }
-      }
-
-      return undefined;
-    }).filter(e => !!e);
-
-    const path = L.geoJson(states, {
-      style: function(feature: any) {
-        const speed = feature.properties.speed;
-        const defaultStyle = {
-          weight: 5
-        }
-        if (speed > 90) {
-          return {
-            ...defaultStyle,
-            color: 'red'
-          };
-        }
-
-        if (speed > 50) {
-          return {
-            ...defaultStyle,
-            color: 'darkorange'
-          };
-        }
-        
-        return {
-          ...defaultStyle,
-          color: 'blue'
-        }
-
-      }
-      });
-   
-      path.addTo(map);
-
-    map.fitBounds(path.getBounds());
-
+    createMap(logs, this.map!.nativeElement);
   }
-
-
 
   private createCharts(logs: Log[], interpolation: boolean) {
 
     // Workaround: when chart is re-created, chartjs scroll top.
     // We keep current scroll position and reapply at the bottom
     const currentPageScroll = document.body.scrollTop || window.scrollY;
-    
+
     // destroy charts if exist
-    if (this.speedChartInstance) {
-      this.speedChartInstance.destroy();
-    }
+    this.chartInstances?.speed?.destroy();
+    this.chartInstances?.tilt?.destroy();
 
-    if (this.tiltChartInstance) {
-      this.tiltChartInstance.destroy();
-    }
-
-    const style = getComputedStyle(document.body);
-    const lightDarkColor = style.getPropertyValue('--mat-sys-primary');
-    const colorSplit = lightDarkColor.match(/^light-dark\((.*)\,(.*)\)$/);
-    const color = colorSplit![1];
-
-    
-    const interpolatedLogs = interpolation ? interpolate(logs) : logs;
-
-    const config: ChartConfiguration = {
-      type: 'line',
-      data: {
-        datasets: []
-      },
-      options: {
-        elements: {
-          point: {
-            radius: 0
-          }
-        },
-        plugins: {
-          legend: {
-            display: false
-          },
-          title: {
-            display: true,
-            text: 'Custom Chart Title'
-          }
-        },
-
-        scales: {
-          xAxis: {
-            type: 'linear',
-            position: 'bottom'
-          },
-          mainY: {
-            beginAtZero: true,
-            display: true,
-            position: 'left',
-          },
-          altY: {
-            display: false,
-            position: 'right'
-          }
-        }
-      }
-    };
-
-    const dataSetDefaultConfig = {
-      cubicInterpolationMode: 'monotone',
-      tension: 0.5,
-      borderWidth: 1,
-      borderColor: color,
-      backgroundColor: function(context: any) {
-        const chart = context.chart;
-        const {ctx, chartArea} = chart;
-
-        if (!chartArea) {
-          // This case happens on initial chart load
-          return;
-        }
-
-        const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-        gradient.addColorStop(1, color);
-        gradient.addColorStop(0, color + '30');
-
-        return gradient;
-      },
-      fill: true,
-      yAxisID: 'mainY',
-    }
-
-
-    const altitudeDataSet = {
-      ...dataSetDefaultConfig,
-      yAxisID: 'altY',
-      label: 'altitude',
-      fill: true,
-      backgroundColor: '#EEEEEE',
-      borderColor: '#EEEEEE',
-      data: interpolatedLogs.map((log: Log) => {
-        return {
-          x: log.distance / 1000,
-          y: log.altitude
-        }
-      })
-    }
-
-    const speedConfig = {
-      ...config
-    }
-    speedConfig.options!.plugins!.title!.text = 'Vitesse';
-    this.speedChartInstance = new Chart(this.speedChart?.nativeElement, {
-      ...speedConfig,
-      data: {
-        datasets: [
-          {
-            ...dataSetDefaultConfig,
-            label: 'Speed',
-            data: interpolatedLogs.map((log: Log) => {
-              return {
-                x: log.distance / 1000,
-                y: Math.round(log.speed)
-              }
-            })
-          }, altitudeDataSet
-        ]
-      }
-    });
-
-    const tiltConfig = {
-      ...config
-    }
-    tiltConfig.options!.plugins!.title!.text = 'Angle';
-    this.tiltChartInstance = new Chart(this.tiltChart?.nativeElement, {
-      ...tiltConfig,
-      data: {
-        datasets: [
-          {
-            ...dataSetDefaultConfig,
-            label: 'Tilt',
-            data: interpolatedLogs.map((log: Log) => {
-              return {
-                x: log.distance / 1000,
-                y: Math.round(log.tilt)
-              }
-            })
-          },
-          altitudeDataSet
-        ]
-      }
+    this.chartInstances = createCharts(logs, interpolation, {
+      speed: this.speedChart!.nativeElement,
+      tilt: this.tiltChart!.nativeElement
     });
 
 
     // Scroll to previous position
-    window.scroll(0,currentPageScroll);
+    window.scroll(0, currentPageScroll);
   }
 
 
@@ -367,7 +195,7 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
             this.snackBar.open('Ride has been sent to your email', undefined, {
               duration: 3000
             });
-          }          
+          }
         }
       )
     )
@@ -379,5 +207,14 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public get Math() {
     return Math;
+  }
+
+
+  public getSpeedZoneDisplay(speedZone: SpeedZone): string {
+    return getSpeedZoneInfo(speedZone).title
+  }
+
+  public getSpeedZoneColor(speedZone: SpeedZone): string {
+    return getSpeedZoneInfo(speedZone).color
   }
 }
