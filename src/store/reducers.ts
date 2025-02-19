@@ -1,8 +1,6 @@
 import { ActionReducer, createReducer, INIT, on } from '@ngrx/store';
 import { upsertAuthToken, upsertRide, upsertRides, upsertUiState } from './actions';
 import { Ride, UiState } from '../models';
-import { Action } from 'rxjs/internal/scheduler/Action';
-import { merge } from 'rxjs';
 
 export const ridesReducer = createReducer<Ride[] | undefined>(
   undefined,
@@ -29,14 +27,6 @@ export const uiStateReducer = createReducer<UiState>(
     ...uiState
   }))
 );
-
-export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
-  return function(state, action) {
-    console.log('state', state);
-    console.log('action', action);
-    return reducer(state, action);
-  };
-}
 
 export const hydrationMetaReducer = (
   reducer: ActionReducer<any>

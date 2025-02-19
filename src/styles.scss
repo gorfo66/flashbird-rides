@@ -43,3 +43,8 @@ body {
     divider-color: transparent
   ));
 }
+
+// Remove the warning message for Alpha usage
+.vAygCK-api-load-alpha-banner {
+  display: none !important;
+}

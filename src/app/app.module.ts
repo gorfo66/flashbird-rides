@@ -16,7 +16,7 @@ import { MAT_CARD_CONFIG } from '@angular/material/card';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,

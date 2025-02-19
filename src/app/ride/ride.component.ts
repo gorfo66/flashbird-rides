@@ -3,14 +3,15 @@ import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Obse
 import { Log, Ride, SpeedZone } from '../../models';
 import { Store } from '@ngrx/store';
 import { selectRide } from '../../store';
-import { average, createCharts, createMap, getSpeedArray, getSpeedZone, getSpeedZoneInfo, getTiltArray, max } from '../../helpers';
+import { average, createCharts, getSpeedArray, getSpeedZone, getSpeedZoneInfo, getTiltArray, max } from '../../helpers';
 import { RideService } from '../../services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
+import { Chart } from 'chart.js';
 
 @Component({
-  selector: 'app-ride-',
+  selector: 'app-ride',
   standalone: false,
 
   templateUrl: './ride.component.html',
@@ -30,10 +31,7 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
 
   private subscriptions: Subscription[] = [];
   private interpolation = new BehaviorSubject<boolean>(false);
-  private chartInstances: any;
-
-  @ViewChild('map')
-  private map: ElementRef | undefined;
+  private chartInstances?: {speed?: Chart, tilt?: Chart};
 
   @ViewChild('speedChart')
   private speedChart: ElementRef | undefined;
@@ -143,14 +141,7 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngAfterViewInit(): void {
-    this.subscriptions.push(
-      this.ride$.pipe(
-        map((ride) => ride.logs)
-      ).subscribe((logs) => {
-        this.createMap(logs!);
-      })
-    );
-
+    
     this.subscriptions.push(
       combineLatest([
         this.ride$.pipe(map((ride) => ride.logs)),
@@ -159,11 +150,6 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
         this.createCharts(logs!, interpolation);
       })
     );
-  }
-
-
-  private createMap(logs: Log[]) {
-    createMap(logs, this.map!.nativeElement);
   }
 
   private createCharts(logs: Log[], interpolation: boolean) {

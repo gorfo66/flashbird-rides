@@ -1,5 +1,5 @@
 export const average = (arr: number[] | undefined): number => {
-  if (!!arr) {
+  if (arr) {
     return arr.reduce((a, b) => { return a + b }, 0) / arr.length;
   }
 
@@ -12,7 +12,7 @@ export const degreesToRadians = (degrees: number) => {
 }
 
 export const max = (arr: number[] | undefined): number => {
-  if (!!arr) {
+  if (arr) {
     return Math.max(...arr);
   }
 

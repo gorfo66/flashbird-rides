@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { RideService } from '../services/flashbird/ride.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { distinctUntilChanged, map, Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { selectUiState } from '../store';
 
 @Component({
@@ -11,17 +10,13 @@ import { selectUiState } from '../store';
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   public isPending$: Observable<boolean>;
 
   constructor(private store: Store) {
     this.isPending$ = this.store.select(selectUiState).pipe(
       map((uiState) => uiState?.isPending || false));
-  }
-
-  ngOnInit(): void {
-
   }
   
 }

@@ -13,20 +13,20 @@ export const getTiltArray = (ride: Ride): number[] | undefined => {
 
 export const distanceInKmBetweenEarthCoordinates = (log1: Log, log2: Log) => {
   let lat1 = log1.latitude;
-  let lon1 = log1.longitude;
+  const lon1 = log1.longitude;
   let lat2 = log2.latitude;
-  let lon2 = log2.longitude;
-  var earthRadiusKm = 6371;
+  const lon2 = log2.longitude;
+  const earthRadiusKm = 6371;
 
-  var dLat = degreesToRadians(lat2-lat1);
-  var dLon = degreesToRadians(lon2-lon1);
+  const dLat = degreesToRadians(lat2 - lat1);
+  const dLon = degreesToRadians(lon2 - lon1);
 
   lat1 = degreesToRadians(lat1);
   lat2 = degreesToRadians(lat2);
 
-  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-          Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return earthRadiusKm * c;
 }
 
@@ -39,9 +39,9 @@ export const interpolate = (logs: Log[]): Log[] => {
   }
 
   let start = 0;
-  let newlogs = [];
+  const newlogs = [];
   while (start < logs.length) {
-    
+
     const points = logs.slice(start, start + step);
     const averageSpeed = average(points.map((point) => point.speed))
     const averageTilt = average(points.map((point) => point.tilt));
@@ -78,7 +78,7 @@ export const getSpeedZone = (speed: number): SpeedZone => {
   return SpeedZone.city
 }
 
-export const getSpeedZoneInfo = (zone: SpeedZone): {color: string; title: string; description: string} => {
+export const getSpeedZoneInfo = (zone: SpeedZone): { color: string; title: string; description: string } => {
   switch (zone) {
     case SpeedZone.city: return {
       title: 'Ville',

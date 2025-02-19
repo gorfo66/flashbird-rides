@@ -17,7 +17,7 @@ export class AuthHeaderInterceptor implements HttpInterceptor {
   }
 
 
-  async handle(request: HttpRequest<any>, next: HttpHandler) {
+  async handle(request: HttpRequest<unknown>, next: HttpHandler) {
     if (request.url === flashbirdUrl && !/SignInWithEmailAndPassword/gi.test(request.body as string)) {
       const token = await firstValueFrom(this.store.select(selectToken));
 

@@ -2,13 +2,13 @@ import { Chart, ChartConfiguration } from "chart.js/auto";
 import { Log } from "../models";
 import { interpolate } from "./ride-helpers";
 
-export const createCharts = (logs: Log[], interpolation: boolean, domElements: { speed: any; tilt: any }): { speed?: Chart; tilt?: Chart | undefined } => {
+export const createCharts = (logs: Log[], interpolation: boolean, domElements: { speed: any; tilt: any }): { speed?: Chart; tilt?: Chart } => {
 
   const style = getComputedStyle(document.body);
   const output: { speed?: Chart; tilt?: Chart } = {};
 
   const lightDarkColor = style.getPropertyValue('--mat-sys-primary');
-  const colorSplit = lightDarkColor.match(/^light-dark\((.*)\,(.*)\)$/);
+  const colorSplit = lightDarkColor.match(/^light-dark\((.*),(.*)\)$/);
   const color = colorSplit![1];
 
 

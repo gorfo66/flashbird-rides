@@ -10,7 +10,7 @@ import { distanceInKmBetweenEarthCoordinates } from '../../helpers';
 const postProcessRide = (ride: Ride): Ride => {
   return {
     ...ride,
-    ... !!ride.logs ? {logs: postProcessLog(ride.logs)} : {},
+    ... ride.logs ? {logs: postProcessLog(ride.logs)} : {},
     startDate: new Date(ride.startTime),
     endDate: new Date(ride.endTime)
   }

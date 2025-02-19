@@ -65,10 +65,9 @@
 
   </div>
 
-
-  <div #map style="height: 500px"></div>
-
-
+  <app-ride-map-google [ride]="ride"></app-ride-map-google>
+  <!-- <app-ride-map-osm [ride]="ride"></app-ride-map-osm> -->
+  
   <mat-chip-set class='speed-zones'>
     <ng-container *ngFor="let zone of (speedZones$|async)">
       <mat-chip [style.background-color]="getSpeedZoneColor(zone.zone)">
@@ -78,7 +77,7 @@
   </mat-chip-set>
 
 
-  <div class='graph-controls'>
+  <div class='chart-controls'>
     <div>
       <mat-checkbox [formControl]="interpolateCheckbox" aria-label="Interpolation">
         Active l'interpolation

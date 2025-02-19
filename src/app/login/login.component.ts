@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from '../../services';
@@ -33,7 +32,7 @@ export class LoginComponent {
       const login = this.form.value.login;
       const password = this.form.value.password;
       this.authService.getToken(login, password).subscribe((reply) => {
-        if (!!reply.error) {
+        if (reply.error) {
           this.errorMessageSubject.next(reply.error);
           return;
         }

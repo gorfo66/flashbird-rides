@@ -41,7 +41,7 @@ export class AuthenticationService {
       const value = JSON.parse(atob(ckunk[1]));
       return new Date().getTime() < (value.exp * 1000)
     }
-    catch (e) {
+    catch {
       return false;
     }
   }

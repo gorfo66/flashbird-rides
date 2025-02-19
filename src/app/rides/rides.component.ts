@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectRides, selectUiState, upsertUiState } from '../../store';
-import { BehaviorSubject, combineLatest, distinctUntilChanged, map, Observable, Subscription, take } from 'rxjs';
+import { combineLatest, map, Observable, Subscription, take } from 'rxjs';
 import { Ride } from '../../models';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
@@ -12,13 +12,13 @@ export enum FilterType {
 
 
 @Component({
-  selector: 'app-rides-',
+  selector: 'app-rides',
   standalone: false,
   
   templateUrl: './rides.component.html',
   styleUrl: './rides.component.scss'
 })
-export class RidesComponent implements AfterViewInit, OnDestroy, OnInit {
+export class RidesComponent implements OnDestroy, OnInit {
 
   private subscriptions: Subscription[] = [];
   private currentFilter$: Observable<string>;
@@ -66,10 +66,6 @@ export class RidesComponent implements AfterViewInit, OnDestroy, OnInit {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(value => value.unsubscribe());
-  }
-
-  ngAfterViewInit(): void {
-    
   }
 
   public formatDistance(distance: number) {
