@@ -20,7 +20,7 @@
     "@angular/google-maps": "^19.1.4",
     "@angular/material": "^19.0.5",
     "@angular/platform-browser": "^19.0.0",
-    "@angular/platform-browser-dynamic": "^19.0.0",
+    "@angular/platform-browser-dynamic": "^19.1.7",
     "@angular/router": "^19.0.0",
     "@ngrx/store": "^19.0.0",
     "@ngrx/store-devtools": "^19.0.0",
