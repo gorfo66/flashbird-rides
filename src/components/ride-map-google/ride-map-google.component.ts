@@ -46,10 +46,9 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
         const map3d = this.renderer.createElement('gmp-map-3d') as google.maps.maps3d.Map3DElement;
         map3d.center = this.getCenter(logs);
         map3d.range = ride!.distance > 100000 ? 50000 : 10000;
-        map3d.tilt = 0;
+        map3d.tilt = 60;
         map3d.heading = 0;
-        map3d.defaultLabelsDisabled = false;
-        
+        map3d.defaultLabelsDisabled = false;       
 
         logs.forEach((log, index) => {
           const next = logs[index + 1];

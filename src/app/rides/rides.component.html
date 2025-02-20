@@ -1,4 +1,8 @@
-Distance totale {{totalDistance$ | async}} km
+<div class = 'statistics-container'>
+  <app-statistic-tile label="Distance totale" unit="km" [value]="totalDistance$ | async"></app-statistic-tile>
+  <app-statistic-tile label="Distance moyenne par mois" unit="km" [value]="distancePerMonth$ | async"></app-statistic-tile>  
+</div>
+
 
 <div class = 'filter-container'>
   <form [formGroup]="filterForm">

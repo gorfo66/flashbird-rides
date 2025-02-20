@@ -7,6 +7,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
+import { StatisticTileModule } from "../../components";
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { CommonModule } from "@angular/common";
     MatButtonModule,
     MatCardModule,
     MatButtonToggleModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    StatisticTileModule
   ],
   declarations: [RidesComponent],
   providers: [RidesGuard]

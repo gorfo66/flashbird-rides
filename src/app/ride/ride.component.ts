@@ -203,4 +203,8 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
   public getSpeedZoneColor(speedZone: SpeedZone): string {
     return getSpeedZoneInfo(speedZone).color
   }
+
+  public getSpeedZoneDescription(speedZone: SpeedZone): string {
+    return getSpeedZoneInfo(speedZone).description
+  }
 }

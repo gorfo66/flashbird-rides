@@ -152,3 +152,10 @@ $timeline-color: var(--mat-sys-primary);
   font: var(--mat-sys-title-medium);
   margin-bottom: 10px;
 }
+
+.statistics-container {
+  display: flex;
+  gap: 20px 40px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}

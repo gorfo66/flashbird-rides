@@ -1,0 +1,12 @@
+.label {
+  font: var(--mat-sys-body-small);
+}
+
+.value {
+  display: flex;
+  align-items: last baseline;
+}
+
+.amount {
+  font: var(--mat-sys-display-medium);
+}

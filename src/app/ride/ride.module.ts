@@ -7,8 +7,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
-import { MatChipsModule } from '@angular/material/chips';
-import { RideMapGoogleModule, RideMapOsmModule } from "../../components";
+import { RideMapGoogleModule, RideMapOsmModule, StatisticTileModule } from "../../components";
 import { CommonModule } from "@angular/common";
 
 
@@ -20,10 +19,10 @@ import { CommonModule } from "@angular/common";
     MatButtonModule,
     MatCheckboxModule,
     MatInputModule,
-    MatChipsModule,
     ReactiveFormsModule,
     RideMapOsmModule,
-    RideMapGoogleModule
+    RideMapGoogleModule,
+    StatisticTileModule
   ],
   declarations: [RideComponent],
   providers: [RideGuard]

@@ -14,67 +14,55 @@
   </div>
 
   <div class='statistics-container'>
-    <div class='statistic'>
-      <div class='label'>Distance</div>
-      <div class='value'>
-        <div class='amount'>{{Math.round(ride.distance / 1000)}}</div>
-        <div class='unit'>km</div>
-      </div>
-    </div>
+    <app-statistic-tile 
+      label="Distance"
+      [value]="Math.round(ride.distance / 1000)"
+      unit="km">
+    </app-statistic-tile>
+    
+    <app-statistic-tile 
+      label="Durée de route"
+      [value]="(drivingDuration$ | async) | date: 'HH:mm':'UTC'"
+      unit="">
+    </app-statistic-tile>
+    
+    <app-statistic-tile 
+      label="Durée de pause"
+      [value]="(pauseDuration$ | async) | date: 'HH:mm':'UTC'"
+      unit="">
+    </app-statistic-tile>
 
-    <div class='statistic'>
-      <div class='label'>Durée de route</div>
-      <div class='value'>
-        <div class='amount'>{{(drivingDuration$ | async) | date: 'HH:mm':'UTC'}}</div>
-        <div class='unit'></div>
-      </div>
-    </div>
+    <app-statistic-tile 
+      label="Vitesse moyenne"
+      [value]="(averageSpeed$ | async)"
+      unit="km/h">
+    </app-statistic-tile>
 
-    <div class='statistic'>
-      <div class='label'>Durée de pause</div>
-      <div class='value'>
-        <div class='amount'>{{(pauseDuration$ | async) | date: 'HH:mm':'UTC'}}</div>
-        <div class='unit'></div>
-      </div>
-    </div>
+    <app-statistic-tile 
+      label="Vitesse maxi"
+      [value]="(maxSpeed$ | async)"
+      unit="km/h">
+    </app-statistic-tile>
 
-    <div class='statistic'>
-      <div class='label'>Vitesse moyenne</div>
-      <div class='value'>
-        <div class='amount'>{{averageSpeed$ | async}}</div>
-        <div class='unit'>km/h</div>
-      </div>
-
-    </div>
-
-    <div class='statistic'>
-      <div class='label'>Vitesse maxi</div>
-      <div class='value'>
-        <div class='amount'>{{maxSpeed$ | async}}</div>
-        <div class='unit'>km/h</div>
-      </div>
-    </div>
-
-    <div class='statistic'>
-      <div class='label'>Angle maxi</div>
-      <div class='value'>
-        <div class='amount'>{{maxTilt$ | async}}</div>
-        <div class='unit'>degrés</div>
-      </div>
-    </div>
-
+    <app-statistic-tile 
+      label="Angle maxi"
+      [value]="(maxTilt$ | async)"
+      unit="degrés">
+    </app-statistic-tile>
+  
   </div>
 
   <app-ride-map-google [ride]="ride"></app-ride-map-google>
   <!-- <app-ride-map-osm [ride]="ride"></app-ride-map-osm> -->
   
-  <mat-chip-set class='speed-zones'>
+  <div class='speed-zones'>
     <ng-container *ngFor="let zone of (speedZones$|async)">
-      <mat-chip [style.background-color]="getSpeedZoneColor(zone.zone)">
-        {{(zone.distance / ride.distance * 100).toFixed(1)}} %
-      </mat-chip>
+      <div [style.background-color]="getSpeedZoneColor(zone.zone)" class = 'zone'>
+        <div>{{(zone.distance / ride.distance * 100).toFixed(1)}} %</div>
+        <div class = 'explanation'>{{getSpeedZoneDescription(zone.zone)}}</div>
+      </div>
     </ng-container>
-  </mat-chip-set>
+  </div>
 
 
   <div class='chart-controls'>

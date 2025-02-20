@@ -26,6 +26,7 @@ export class RidesComponent implements OnDestroy, OnInit {
   public rides$: Observable<Ride[]>;
   public filteredRides$: Observable<Ride[]>;
   public totalDistance$: Observable<number>;
+  public distancePerMonth$: Observable<number>;
   public readonly filterForm: FormGroup
  
   constructor(private store: Store, formBuilder: FormBuilder) {
@@ -41,6 +42,19 @@ export class RidesComponent implements OnDestroy, OnInit {
       })
     );
     this.totalDistance$ = this.rides$.pipe(map((rides) => Math.floor(rides.reduce((a, b) => a + b.distance, 0) / 1000)))
+    this.distancePerMonth$ = combineLatest([
+      this.rides$,
+      this.totalDistance$
+    ]).pipe(
+      map(([rides, totalDistance]) => {
+        const lastDate = rides[0].startDate;
+        const firstDate = rides[rides.length - 1].endDate;
+        const elapsedTime = lastDate.getTime() - firstDate.getTime();
+        const oneMonthAverageDurationInMs = (365.25 / 12) * 24 * 3600 * 1000;
+        const elapsedTimeInMonth = elapsedTime / oneMonthAverageDurationInMs;
+        return Math.floor(totalDistance / elapsedTimeInMonth);
+      })
+    )
 
     this.filterForm = formBuilder.group({
       filter: ''

@@ -38,17 +38,23 @@
  
 }
 
+.explanation {
+  font: var(--mat-sys-body-small);
+}
 
 .chart-controls {
   margin: 40px 0 10px;
-
-  .explanation {
-    font: var(--mat-sys-body-small);
-  }
 }
 
 
 .speed-zones {
-  --mdc-chip-label-text-color: #fff;
-  --mdc-chip-outline-width: 0;
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+
+  .zone {
+    color: #fff;
+    padding: 10px;
+    border-radius: var(--mdc-outlined-card-container-shape);
+  }
 }
