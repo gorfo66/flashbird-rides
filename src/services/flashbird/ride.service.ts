@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, mergeMap, Observable } from 'rxjs';
-import { Log, Ride } from '../../models';
+import { Log, Ride, GetRideReply, GetRidesReply, ExportReply } from '../../models';
 import { ElevationService } from '../elevation.service';
 import { flashbirdUrl } from './constants';
 import { distanceInKmBetweenEarthCoordinates } from '../../helpers';
@@ -44,12 +44,12 @@ export class RideService {
 
 
   public getRides(): Observable<Ride[]> {
-    return this.httpClient.post(
+    return this.httpClient.post<GetRidesReply>(
       flashbirdUrl, 
       JSON.stringify({"query":"query Rides{user{devices{rides{id name startTime endTime startLocation endLocation distance}}}}","variables":{},"operationName":"Rides"})
     ).pipe(
-      map((response:any) => {
-        return response.data?.user?.devices[0]?.rides as Ride[]
+      map((response) => {
+        return response.data.user.devices[0].rides;
       }),
       map((rides) => rides.filter(ride => !!ride.distance).map(postProcessRide))
     )
@@ -57,12 +57,12 @@ export class RideService {
 
 
   public getRide(id: string): Observable<Ride> {
-    return this.httpClient.post(
+    return this.httpClient.post<GetRideReply>(
       flashbirdUrl, 
       JSON.stringify({"query":"query Logs($rideId: ID!) { user { ride(id: $rideId) { logs { latitude longitude gpsTimestamp speed tilt } id name startTime endTime startLocation endLocation distance}}}","variables":{"rideId":id},"operationName":"Logs"})
     ).pipe(
-      map((response:any) => {
-        return response.data?.user?.ride as Ride
+      map((response) => {
+        return response.data.user.ride
       }),
       map(postProcessRide),
       mergeMap(
@@ -80,11 +80,11 @@ export class RideService {
 
 
   public export(id: string): Observable<boolean> {
-    return this.httpClient.post(
+    return this.httpClient.post<ExportReply>(
       flashbirdUrl, 
       JSON.stringify({"query":"mutation ExportToGPX($exportToGpxId: ID!) { exportToGPX(id: $exportToGpxId) }","variables":{"exportToGpxId": id},"operationName":"ExportToGPX"})
     ).pipe(
-      map((response:any) => {
+      map((response) => {
         return response.data?.exportToGPX
       })
     )

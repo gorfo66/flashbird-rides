@@ -41,19 +41,20 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
       ).subscribe(async (ride) => {
         const logs = ride!.logs!;
 
-        const {AltitudeMode } = await google.maps.importLibrary("maps3d") as google.maps.Maps3DLibrary;
+        const { AltitudeMode, Map3DElement, Polyline3DElement } = await google.maps.importLibrary("maps3d") as google.maps.Maps3DLibrary;
 
-        const map3d = this.renderer.createElement('gmp-map-3d') as google.maps.maps3d.Map3DElement;
+        const map3d = new Map3DElement()
         map3d.center = this.getCenter(logs);
         map3d.range = ride!.distance > 100000 ? 50000 : 10000;
         map3d.tilt = 60;
         map3d.heading = 0;
-        map3d.defaultLabelsDisabled = false;       
+        map3d.defaultLabelsDisabled = false;
+        (map3d as any).mode = 'HYBRID';
 
         logs.forEach((log, index) => {
           const next = logs[index + 1];
           if (next) {
-            const line = this.renderer.createElement('gmp-polyline-3d') as google.maps.maps3d.Polyline3DElement;
+            const line = new Polyline3DElement();
             line.coordinates = [
               {
                 lat: log.latitude,
@@ -68,12 +69,12 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
             line.strokeColor = getSpeedZoneInfo(getSpeedZone(log.speed)).color;
             line.strokeWidth = 5;
             line.strokeOpacity = 0.3;
-            this.renderer.appendChild(map3d, line);
+            map3d.append(line);
           }
         });
-        
+
         this.renderer.appendChild(this.map?.nativeElement, map3d);
-        
+
       })
     );
   }
@@ -85,9 +86,9 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
     const minLatitude = Math.min(...latitudes);
     const centerLongitude = (Math.max(...longitudes) - minLongitude) / 2 + minLongitude;
     const centerLatitude = (Math.max(...latitudes) - minLatitude) / 2 + minLatitude;
-    
+
     return {
-      lat: centerLatitude, 
+      lat: centerLatitude,
       lng: centerLongitude,
       altitude: 0
     };
