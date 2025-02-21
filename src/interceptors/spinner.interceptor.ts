@@ -1,7 +1,7 @@
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { map, Observable } from "rxjs";
+import { catchError, map, Observable } from "rxjs";
 import { upsertUiState } from "../store";
 
 @Injectable()
@@ -17,6 +17,10 @@ export class SpinnerInterceptor implements HttpInterceptor {
           this.store.dispatch(upsertUiState({ uiState: { isPending: false} }))
         }
         return response;
+      }),
+      catchError((err) => {
+        this.store.dispatch(upsertUiState({ uiState: { isPending: false} }))
+        throw err;
       }));
   }
 }
