@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, mergeMap, Observable } from 'rxjs';
+import { catchError, map, mergeMap, Observable, of } from 'rxjs';
 import { Log, Ride, GetRideReply, GetRidesReply, ExportReply } from '../../models';
 import { ElevationService } from '../elevation.service';
 import { flashbirdUrl } from './constants';
@@ -49,9 +49,9 @@ export class RideService {
       JSON.stringify({"query":"query Rides{user{devices{rides{id name startTime endTime startLocation endLocation distance}}}}","variables":{},"operationName":"Rides"})
     ).pipe(
       map((response) => {
-        return response.data.user.devices[0].rides;
+        return response.data.user.devices.map((device) => device.rides).reduce((previous, current) => ([...previous, ... current]), []);
       }),
-      map((rides) => rides.filter(ride => !!ride.distance).map(postProcessRide))
+      map((rides) => rides.filter(ride => !!ride.distance).map(postProcessRide).sort((a, b) => (b.startTime - a.startTime)))
     )
   }
 
@@ -67,12 +67,15 @@ export class RideService {
       map(postProcessRide),
       mergeMap(
         (ride) => {
-          return this.elevationService.getElevations(ride.logs).pipe(map((logs) => {
-            return {
-              ...ride,
-              logs
-            }
-          }))
+          return this.elevationService.getElevations(ride.logs).pipe(
+            map((logs) => {
+              return {
+                ...ride,
+                logs
+              }
+            }),
+            catchError( () => of(ride)),
+          )
         }
       )
     )

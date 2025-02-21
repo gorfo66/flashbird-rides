@@ -4,6 +4,8 @@ import { CommonModule } from "@angular/common";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 
 @NgModule({
@@ -11,6 +13,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     CommonModule,
     MatCheckboxModule,
     MatSlideToggleModule,
+    MatIconModule,
+    MatButtonModule,
     ReactiveFormsModule
   ],
   declarations: [RideMapGoogleComponent],

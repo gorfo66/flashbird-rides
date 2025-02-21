@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, Subscription, take } from 'rxjs';
 import { Log, Ride, SpeedZone } from '../../models';
 import { Store } from '@ngrx/store';
-import { selectRide } from '../../store';
+import { selectRide, selectUiState, upsertUiState } from '../../store';
 import { average, createCharts, getSpeedArray, getSpeedZone, getSpeedZoneInfo, getTiltArray, max } from '../../helpers';
 import { RideService } from '../../services';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -26,8 +26,9 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
   public drivingDuration$: Observable<number>;
   public pauseDuration$: Observable<number>;
   public speedZones$: Observable<{ zone: SpeedZone; distance: number }[]>
-  public interpolateCheckbox = new FormControl()
+  public interpolateCheckbox = new FormControl();
 
+  public showMapLabels$: Observable<boolean>;
 
   private subscriptions: Subscription[] = [];
   private interpolation = new BehaviorSubject<boolean>(false);
@@ -46,6 +47,11 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
     this.ride$ = this.store.select(selectRide).pipe(
       distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
     );
+
+    this.showMapLabels$ = this.store.select(selectUiState).pipe(
+      map((state) => state.showLabels || false),
+      distinctUntilChanged()
+    )
 
     this.averageSpeed$ = this.ride$.pipe(
       filter((ride) => !!ride.logs),
@@ -79,9 +85,6 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
             const hasMoved = (next.distance - log.distance) > 2; // less than 2 meters, considers that we did not yet move
             if (hasMoved) {
               duration += (next.gpsTimestamp - log.gpsTimestamp);
-            }
-            else {
-              console.log('did not move');
             }
           }
         });
@@ -206,5 +209,11 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
 
   public getSpeedZoneDescription(speedZone: SpeedZone): string {
     return getSpeedZoneInfo(speedZone).description
+  }
+
+  public showLabelsUpdated(value: boolean) {
+    this.store.dispatch(upsertUiState( {uiState: {
+      showLabels: value
+    }}));
   }
 }

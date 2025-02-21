@@ -1,6 +1,14 @@
 import { Ride } from "./ride";
 
 export interface AuthenticationReply {
+  data?: {
+    signInWithEmailAndPassword?: {
+      token: string
+    }
+  }
+}
+
+export interface AuthenticationResult {
   token: string | undefined;
   error?: string | undefined
 }

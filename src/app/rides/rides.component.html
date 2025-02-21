@@ -3,7 +3,6 @@
   <app-statistic-tile label="Distance moyenne par mois" unit="km" [value]="distancePerMonth$ | async"></app-statistic-tile>  
 </div>
 
-
 <div class = 'filter-container'>
   <form [formGroup]="filterForm">
     <mat-button-toggle-group name="filterValue" aria-label="Filtre" hideSingleSelectionIndicator="false" formControlName="filter">
@@ -43,8 +42,6 @@
               </div>
               <div class='location arrival'><span>{{ride.endDate | date:
                   'HH:mm'}}</span><span>{{ride.endLocation}}</span></div>
-
-
             </div>
           </div>
 

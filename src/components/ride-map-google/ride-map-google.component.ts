@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { Log, Ride } from '../../models';
 import { BehaviorSubject, distinctUntilChanged, filter, Subscription } from 'rxjs';
 import { getSpeedZone, getSpeedZoneInfo } from '../../helpers';
@@ -11,10 +11,14 @@ import { FormControl } from '@angular/forms';
   styleUrl: './ride-map-google.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RideMapGoogleComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
+export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewInit {
 
   @Input() ride?: Ride;
   private rideSubject = new BehaviorSubject<Ride | undefined>(undefined);
+
+  @Input() showLabels = false;
+
+  @Output() showLabelsUpdated = new EventEmitter<boolean>()
 
   private subscriptions: Subscription[] = [];
 
@@ -22,18 +26,18 @@ export class RideMapGoogleComponent implements OnInit, OnChanges, OnDestroy, Aft
   private map: ElementRef | undefined;
 
 
-  public modeCheckbox = new FormControl();
+  public showLabelsCheckbox = new FormControl();
   private mode = 'SATELLITE';
 
   private map3d?: any;
 
 
-  constructor(private renderer: Renderer2) { }
+  public isFullScreen = false;
 
-
-  ngOnInit(): void {
+  constructor(private renderer: Renderer2) {
     this.subscriptions.push(
-      this.modeCheckbox.valueChanges.subscribe((change) => {
+      this.showLabelsCheckbox.valueChanges.subscribe((change) => {
+        this.showLabelsUpdated.emit(change);
         this.mode = change ? 'HYBRID' : 'SATELLITE';
         this.updateModeValue();
       })
@@ -41,8 +45,13 @@ export class RideMapGoogleComponent implements OnInit, OnChanges, OnDestroy, Aft
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+
     if (changes['ride']) {
       this.rideSubject.next(this.ride);
+    }
+
+    if (changes['showLabels']) {
+      this.showLabelsCheckbox.setValue(this.showLabels);
     }
   }
 
@@ -114,5 +123,9 @@ export class RideMapGoogleComponent implements OnInit, OnChanges, OnDestroy, Aft
     if (this.map3d) {
       this.renderer.setAttribute(this.map3d, 'mode', this.mode)
     }
+  }
+
+  public toggleFullScreen(fullScreen: boolean) {
+    this.isFullScreen = fullScreen;
   }
 }

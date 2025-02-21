@@ -1,6 +1,6 @@
 import { ActionReducer, createReducer, INIT, on } from '@ngrx/store';
 import { upsertAuthToken, upsertRide, upsertRides, upsertUiState } from './actions';
-import { Ride, UiState } from '../models';
+import { Ride, RootState, UiState } from '../models';
 
 export const ridesReducer = createReducer<Ride[] | undefined>(
   undefined,
@@ -29,15 +29,18 @@ export const uiStateReducer = createReducer<UiState>(
 );
 
 export const hydrationMetaReducer = (
-  reducer: ActionReducer<any>
-): ActionReducer<any> => {
+  reducer: ActionReducer<RootState>
+): ActionReducer<RootState> => {
   return (state, action) => {
     if (action.type === INIT) {
       const token = localStorage.getItem("token");
+      const uiState = localStorage.getItem('uiState');
       if (token) {
         return {
+          rides: undefined,
+          ride: undefined,
           token,
-          uiState: {
+          uiState: uiState ? JSON.parse(uiState) : {
             isPending: false,
             filter: 'all'
           }
@@ -48,6 +51,7 @@ export const hydrationMetaReducer = (
     localStorage.removeItem("token");
     if (nextState.token) {
       localStorage.setItem("token", nextState.token);
+      localStorage.setItem('uiState', JSON.stringify(nextState.uiState))
     }
     return nextState;
   };

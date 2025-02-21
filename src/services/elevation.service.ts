@@ -1,21 +1,30 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable, of } from 'rxjs';
+import { map, Observable, of, timeout } from 'rxjs';
 import { Log } from '../models';
+
+interface OpenElevationReply {
+  results: {
+    latitude: number,
+    longitude: number,
+    elevation: number
+  }[]
+}
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ElevationService {
 
-  private readonly activated = false;
+  private readonly activated = true;
 
   constructor(private httpClient: HttpClient) { }
 
 
   public getElevations(logs: Log[] | undefined): Observable<Log[]> {
     if (this.activated && !!logs) {
-      return this.httpClient.post(
+      return this.httpClient.post<OpenElevationReply>(
         'https://api.open-elevation.com/api/v1/lookup',
         JSON.stringify({
           "locations": logs.map((log => ({
@@ -24,7 +33,8 @@ export class ElevationService {
           })))
         })
       ).pipe(
-        map((response: any) => {
+        timeout(5000),
+        map((response) => {
           return response.results
         }),
         map(

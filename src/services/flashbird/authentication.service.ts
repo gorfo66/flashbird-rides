@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { flashbirdUrl } from './constants';
-import { AuthenticationReply } from '../../models';
+import { AuthenticationReply, AuthenticationResult } from '../../models';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,8 @@ export class AuthenticationService {
   constructor( private httpClient: HttpClient) { }
 
 
-  public getToken(login: string, password: string): Observable<AuthenticationReply> {
-    return this.httpClient.post(
+  public getToken(login: string, password: string): Observable<AuthenticationResult> {
+    return this.httpClient.post<AuthenticationReply>(
       flashbirdUrl, 
       JSON.stringify({
         "query":"mutation SignInWithEmailAndPassword($email: String!, $password: String!) { signInWithEmailAndPassword(email: $email, password: $password) { token }}",
@@ -24,7 +24,7 @@ export class AuthenticationService {
         "operationName":"SignInWithEmailAndPassword"
       })
     ).pipe(
-      map((response:any) => {
+      map((response) => {
         const token = response.data?.signInWithEmailAndPassword?.token as string;
         return {
           token,

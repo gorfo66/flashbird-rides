@@ -1,5 +1,16 @@
-<mat-checkbox [formControl]="modeCheckbox" aria-label="Labels">
+<mat-checkbox [formControl]="showLabelsCheckbox" aria-label="Labels">
   Affiche les différents labels
 </mat-checkbox>
-<div #map style="height: 600px;"></div>
+<div class = 'map-container' [class.full-screen]="isFullScreen">
+  <div #map class = 'map'></div>
+  <div class = 'actions'>
+    <button mat-icon-button *ngIf="!isFullScreen" (click)="toggleFullScreen(true)">
+      <mat-icon>fullscreen</mat-icon>
+    </button>
+    <button mat-icon-button *ngIf="isFullScreen" (click)="toggleFullScreen(false)">
+      <mat-icon>fullscreen_exit</mat-icon>
+    </button>
+  </div>
+</div>
+
 

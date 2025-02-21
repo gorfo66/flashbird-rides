@@ -1,58 +1,25 @@
 <ng-container *ngIf="(ride$ | async) as ride">
-
   <div role="presentation" class='top'>
     <div>
       <h1>{{ride.name}}</h1>
       <div>{{ride.startDate | date:'EEEE dd MMMM yyyy'}}</div>
     </div>
-
     <div class='actions-container'>
       <button mat-button (click)="back()">Retour</button>
       <button mat-button (click)="export(ride.id)">Exporter en GPX</button>
     </div>
-
   </div>
 
   <div class='statistics-container'>
-    <app-statistic-tile 
-      label="Distance"
-      [value]="Math.round(ride.distance / 1000)"
-      unit="km">
-    </app-statistic-tile>
-    
-    <app-statistic-tile 
-      label="Durée de route"
-      [value]="(drivingDuration$ | async) | date: 'HH:mm':'UTC'"
-      unit="">
-    </app-statistic-tile>
-    
-    <app-statistic-tile 
-      label="Durée de pause"
-      [value]="(pauseDuration$ | async) | date: 'HH:mm':'UTC'"
-      unit="">
-    </app-statistic-tile>
-
-    <app-statistic-tile 
-      label="Vitesse moyenne"
-      [value]="(averageSpeed$ | async)"
-      unit="km/h">
-    </app-statistic-tile>
-
-    <app-statistic-tile 
-      label="Vitesse maxi"
-      [value]="(maxSpeed$ | async)"
-      unit="km/h">
-    </app-statistic-tile>
-
-    <app-statistic-tile 
-      label="Angle maxi"
-      [value]="(maxTilt$ | async)"
-      unit="degrés">
-    </app-statistic-tile>
-  
+    <app-statistic-tile label="Distance" unit="km" [value]="Math.round(ride.distance / 1000)"></app-statistic-tile>
+    <app-statistic-tile label="Durée de route" unit="" [value]="(drivingDuration$ | async) | date: 'HH:mm':'UTC'"></app-statistic-tile>
+    <app-statistic-tile label="Durée de pause" unit="" [value]="(pauseDuration$ | async) | date: 'HH:mm':'UTC'"></app-statistic-tile>
+    <app-statistic-tile label="Vitesse moyenne" unit="km/h" [value]="(averageSpeed$ | async)"></app-statistic-tile>
+    <app-statistic-tile label="Vitesse maxi" unit="km/h" [value]="(maxSpeed$ | async)"></app-statistic-tile>
+    <app-statistic-tile label="Angle maxi" unit="degrés" [value]="(maxTilt$ | async)"></app-statistic-tile>
   </div>
 
-  <app-ride-map-google [ride]="ride"></app-ride-map-google>
+  <app-ride-map-google [ride]="ride" [showLabels]="(showMapLabels$ | async) || false" (showLabelsUpdated)="showLabelsUpdated($event)"></app-ride-map-google>
   <!-- <app-ride-map-osm [ride]="ride"></app-ride-map-osm> -->
   
   <div class='speed-zones'>
@@ -64,25 +31,17 @@
     </ng-container>
   </div>
 
-
   <div class='chart-controls'>
-    <div>
-      <mat-checkbox [formControl]="interpolateCheckbox" aria-label="Interpolation">
-        Active l'interpolation
-        <div class='explanation' role="presentation">
-          Lorsque l'interpolation est activée et que le trajet comporte plus de 1000 points GPS, le système va
-          n'afficher qu'environ 1000 points, en y attribuant une moyenne des valeurs des points intermédiaires.<br />
-          Il en resultera un lissage des courbes mais une perte de précision sur les valeurs de crête.
-        </div>
-      </mat-checkbox>
-    </div>
-
+    <mat-checkbox [formControl]="interpolateCheckbox" aria-label="Interpolation" *ngIf="ride.logs!.length > 1000">
+      Active l'interpolation
+      <div class='explanation' role="presentation">
+        Lorsque l'interpolation est activée et que le trajet comporte plus de 1000 points GPS, le système va
+        n'afficher qu'environ 1000 points, en y attribuant une moyenne des valeurs des points intermédiaires.<br />
+        Il en resultera un lissage des courbes mais une perte de précision sur les valeurs de crête.
+      </div>
+    </mat-checkbox>
   </div>
 
-
-
   <canvas #speedChart></canvas>
-
   <canvas #tiltChart></canvas>
-
 </ng-container>
