@@ -1,0 +1,36 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Check out the repository to the runner
+        uses: actions/checkout@v4
+      - name: Install
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm run test:ci
+      - name: Deploy
+        uses: milanmk/actions-file-deployer@master
+        with:
+          remote-protocol: ftp
+          remote-host: ${{ secrets.FTP_HOST }}
+          remote-user: ${{ secrets.FTP_LOGIN }}
+          remote-password: ${{ secrets.FTP_PASSWORD }}
+          remote-port: 21
+          remote-path: /www/flashbird-rides
+          local-path: dist/flashbird-rides/browser
+          sync: full
+
+
+
