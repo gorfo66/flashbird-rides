@@ -2,21 +2,21 @@
   <div role="presentation" class='top'>
     <div>
       <h1>{{ride.name}}</h1>
-      <div>{{ride.startDate | date:'EEEE dd MMMM yyyy'}}</div>
+      <div class = 'start-date'>{{ride.startDate | date:'EEEE dd MMMM yyyy'}}</div>
     </div>
     <div class='actions-container'>
-      <button mat-button (click)="back()">Retour</button>
-      <button mat-button (click)="export(ride.id)">Exporter en GPX</button>
+      <button mat-button (click)="back()" id="back-button">Retour</button>
+      <button mat-button (click)="export(ride.id)" id="export-button">Exporter en GPX</button>
     </div>
   </div>
 
   <div class='statistics-container'>
-    <app-statistic-tile label="Distance" unit="km" [value]="Math.round(ride.distance / 1000)"></app-statistic-tile>
-    <app-statistic-tile label="Durée de route" unit="" [value]="(drivingDuration$ | async) | date: 'HH:mm':'UTC'"></app-statistic-tile>
-    <app-statistic-tile label="Durée de pause" unit="" [value]="(pauseDuration$ | async) | date: 'HH:mm':'UTC'"></app-statistic-tile>
-    <app-statistic-tile label="Vitesse moyenne" unit="km/h" [value]="(averageSpeed$ | async)"></app-statistic-tile>
-    <app-statistic-tile label="Vitesse maxi" unit="km/h" [value]="(maxSpeed$ | async)"></app-statistic-tile>
-    <app-statistic-tile label="Angle maxi" unit="degrés" [value]="(maxTilt$ | async)"></app-statistic-tile>
+    <app-statistic-tile id = 'stat-distance' label="Distance" unit="km" [value]="Math.round(ride.distance / 1000)"></app-statistic-tile>
+    <app-statistic-tile id = 'stat-driving-duration' label="Durée de route" unit="" [value]="(drivingDuration$ | async) | date: 'HH:mm':'UTC'"></app-statistic-tile>
+    <app-statistic-tile id = 'stat-break-duration' label="Durée de pause" unit="" [value]="(pauseDuration$ | async) | date: 'HH:mm':'UTC'"></app-statistic-tile>
+    <app-statistic-tile id = 'stat-average-speed' label="Vitesse moyenne" unit="km/h" [value]="(averageSpeed$ | async)"></app-statistic-tile>
+    <app-statistic-tile id = 'stat-max-speed' label="Vitesse maxi" unit="km/h" [value]="(maxSpeed$ | async)"></app-statistic-tile>
+    <app-statistic-tile id = 'stat-max-tilt' label="Angle maxi" unit="degrés" [value]="(maxTilt$ | async)"></app-statistic-tile>
   </div>
 
   <app-ride-map-google [ride]="ride" [showLabels]="(showMapLabels$ | async) || false" (showLabelsUpdated)="showLabelsUpdated($event)"></app-ride-map-google>

@@ -4,10 +4,10 @@
 <div class = 'map-container' [class.full-screen]="isFullScreen">
   <div #map class = 'map'></div>
   <div class = 'actions'>
-    <button mat-icon-button *ngIf="!isFullScreen" (click)="toggleFullScreen(true)">
+    <button mat-icon-button *ngIf="!isFullScreen" (click)="toggleFullScreen(true)" class = 'full-screen-button'>
       <mat-icon>fullscreen</mat-icon>
     </button>
-    <button mat-icon-button *ngIf="isFullScreen" (click)="toggleFullScreen(false)">
+    <button mat-icon-button *ngIf="isFullScreen" (click)="toggleFullScreen(false)" class = 'full-screen-exit-button'>
       <mat-icon>fullscreen_exit</mat-icon>
     </button>
   </div>

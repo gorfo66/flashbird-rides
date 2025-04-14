@@ -59,6 +59,14 @@ export class RidesComponent implements OnDestroy, OnInit {
     this.filterForm = formBuilder.group({
       filter: ''
     });
+
+    this.subscriptions.push(
+      this.filterForm.valueChanges.subscribe((change) => {
+        if (change.filter) {
+          this.store.dispatch(upsertUiState({uiState : { filter: change.filter}}));
+        }
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -66,14 +74,6 @@ export class RidesComponent implements OnDestroy, OnInit {
     this.subscriptions.push(
       this.currentFilter$.pipe(take(1)).subscribe((value) => {
         this.filterForm.controls['filter'].setValue(value);
-      })
-    );
-
-    this.subscriptions.push(
-      this.filterForm.valueChanges.subscribe((change) => {
-        if (change.filter) {
-          this.store.dispatch(upsertUiState({uiState : { filter: change.filter}}));
-        }
       })
     );
   }
