@@ -29,6 +29,7 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
   public showLabelsCheckbox = new FormControl();
   private mode = 'SATELLITE';
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private map3d?: any;
 
 
@@ -64,7 +65,7 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
       this.rideSubject.pipe(
         filter(ride => !!ride && !!ride.logs),
         distinctUntilChanged()
-      ).subscribe(this.renderMap)
+      ).subscribe((ride) => this.renderMap(ride))
     );
   }
 
@@ -90,11 +91,15 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
   }
 
 
+  private async loadLibraries(): Promise<google.maps.Maps3DLibrary> {
+    return await google.maps.importLibrary("maps3d") as google.maps.Maps3DLibrary;
+  }
+
   private async renderMap(ride: Ride | undefined) {
     if (ride) {
       const logs = ride!.logs!;
 
-      const { AltitudeMode, Map3DElement, Polyline3DElement } = await google.maps.importLibrary("maps3d") as google.maps.Maps3DLibrary;
+      const { AltitudeMode, Map3DElement, Polyline3DElement } = await this.loadLibraries();
 
       this.map3d = new Map3DElement()
       this.map3d.center = this.getCenter(logs);
@@ -126,7 +131,6 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
       });
 
       this.renderer.appendChild(this.map?.nativeElement, this.map3d);
-
     }
   }
 

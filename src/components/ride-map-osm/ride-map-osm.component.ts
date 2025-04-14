@@ -39,7 +39,7 @@ export class RideMapOsmComponent implements OnChanges, OnDestroy, AfterViewInit 
       this.rideSubject.pipe(
         filter(ride => !!ride && !!ride.logs),
         distinctUntilChanged()
-      ).subscribe(this.renderMap)
+      ).subscribe((ride) => this.renderMap(ride))
     );
   }
 

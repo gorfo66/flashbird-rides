@@ -7,11 +7,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { RideMapGoogleComponentFixture } from './ride-map-google.fixture';
 import { MOCK_RIDE } from '../../../mocks/ride';
+import { AltitudeMode, Map3DElement, Polyline3DElement } from './google-libraries.mock';
 
 describe('GoogleMapComponent', () => {
   let component: RideMapGoogleComponent;
+  let fullComponent: any;
   let fixture: ComponentFixture<RideMapGoogleComponent>;
   let componentFixture: RideMapGoogleComponentFixture;
+  let spyRenderMap: jasmine.Spy;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -23,12 +26,18 @@ describe('GoogleMapComponent', () => {
         ReactiveFormsModule
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(RideMapGoogleComponent);
     fixture.componentRef.setInput('ride', MOCK_RIDE);
     component = fixture.componentInstance;
-    (component as any).renderMap = jasmine.createSpy('renderMap');
+    fullComponent = (component as any);
+    spyRenderMap = spyOn(fullComponent, 'renderMap').and.callThrough();
+    fullComponent.loadLibraries = () => ({
+      AltitudeMode,
+      Map3DElement,
+      Polyline3DElement
+    });
     componentFixture = new RideMapGoogleComponentFixture(fixture.debugElement);
 
     fixture.detectChanges();
@@ -38,31 +47,44 @@ describe('GoogleMapComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should toggle the map mode on click', () => {    
-    expect((component as any).mode).toEqual('SATELLITE');
-    
+  it('should render the map', () => {
+    expect(spyRenderMap).toHaveBeenCalledOnceWith(MOCK_RIDE);
+
+    const map = fullComponent.map3d;
+    expect(map).toBeDefined();
+    expect(map.lines.length).toEqual(MOCK_RIDE.logs.length - 1);
+    expect(map.mode).toEqual('SATELLITE');
+    expect(map.range).toEqual(10000);
+    expect(map.tilt).toEqual(60);
+    expect(map.heading).toEqual(0);
+  });
+
+  it('should toggle the map mode on click', () => {
+    const map = fullComponent.map3d;
+
+    expect(fullComponent.mode).toEqual('SATELLITE');
+
     componentFixture.clickShowLabelCheckbox();
     fixture.detectChanges();
 
-    expect((component as any).mode).toEqual('HYBRID');
+    expect(fullComponent.mode).toEqual('HYBRID');
+    expect(map.mode).toEqual('HYBRID');
 
     componentFixture.clickShowLabelCheckbox();
     fixture.detectChanges();
 
-    expect((component as any).mode).toEqual('SATELLITE');
+    expect(fullComponent.mode).toEqual('SATELLITE');
+    expect(map.mode).toEqual('SATELLITE');
 
   });
 
-  it('should call the renderMap method', () => {
-    expect((component as any).renderMap).toHaveBeenCalledOnceWith(MOCK_RIDE);
-  });
 
   it('should toggle the fullscreen mode on and off', () => {
     expect(component.isFullScreen).toBeFalse();
 
     componentFixture.clickFullScreenButton();
     fixture.detectChanges();
-    
+
     expect(component.isFullScreen).toBeTrue();
     expect(componentFixture.getMapContainer().classes['full-screen']).toBeTrue();
 
