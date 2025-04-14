@@ -39,55 +39,58 @@ export class RideMapOsmComponent implements OnChanges, OnDestroy, AfterViewInit 
       this.rideSubject.pipe(
         filter(ride => !!ride && !!ride.logs),
         distinctUntilChanged()
-      ).subscribe((ride) => {
-
-        const logs = ride!.logs!;
-        
-        const map = L.map(this.map!.nativeElement);
-        
-          L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
-            attribution: null,
-            minZoom: 1,
-            maxZoom: 20
-          }).addTo(map);
-        
-          const states = logs.map((log, index) => {
-            const next = logs[index + 1];
-            if (next) {
-              return {
-                type: 'Feature',
-                properties: {
-                  speed: log.speed
-                },
-                geometry: {
-                  type: 'Polygon',
-                  coordinates: [[
-                    [log.longitude, log.latitude],
-                    [next.longitude, next.latitude]
-                  ]]
-                }
-              }
-            }
-        
-            return undefined;
-          }).filter(e => !!e);
-        
-          const path = L.geoJson(states, {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            style: function (feature: any) {
-              const speed = feature.properties.speed;
-              const color = getSpeedZoneInfo(getSpeedZone(speed)).color;
-        
-              return {
-                weight: 5,
-                color: color
-              }
-            }
-          });
-        
-          path.addTo(map);
-          map.fitBounds(path.getBounds());
-      })
+      ).subscribe(this.renderMap)
     );
+  }
+
+  private async renderMap(ride: Ride | undefined) {
+    if (ride) {
+      const logs = ride!.logs!;
+
+      const map = L.map(this.map!.nativeElement);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+        attribution: null,
+        minZoom: 1,
+        maxZoom: 20
+      }).addTo(map);
+
+      const states = logs.map((log, index) => {
+        const next = logs[index + 1];
+        if (next) {
+          return {
+            type: 'Feature',
+            properties: {
+              speed: log.speed
+            },
+            geometry: {
+              type: 'Polygon',
+              coordinates: [[
+                [log.longitude, log.latitude],
+                [next.longitude, next.latitude]
+              ]]
+            }
+          }
+        }
+
+        return undefined;
+      }).filter(e => !!e);
+
+      const path = L.geoJson(states, {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        style: function (feature: any) {
+          const speed = feature.properties.speed;
+          const color = getSpeedZoneInfo(getSpeedZone(speed)).color;
+
+          return {
+            weight: 5,
+            color: color
+          }
+        }
+      });
+
+      path.addTo(map);
+      map.fitBounds(path.getBounds());
+    }
   }
 }

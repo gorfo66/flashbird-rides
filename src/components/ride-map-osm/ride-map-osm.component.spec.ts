@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RideMapOsmComponent } from './ride-map-osm.component';
+import { MOCK_RIDE } from '../../../mocks/ride';
 
 describe('RideMapOsmComponent', () => {
   let component: RideMapOsmComponent;
@@ -13,11 +14,17 @@ describe('RideMapOsmComponent', () => {
     .compileComponents();
 
     fixture = TestBed.createComponent(RideMapOsmComponent);
+    fixture.componentRef.setInput('ride', MOCK_RIDE);
     component = fixture.componentInstance;
+    (component as any).renderMap = jasmine.createSpy('renderMap');
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should call the renderMap method', () => {
+    expect((component as any).renderMap).toHaveBeenCalledOnceWith(MOCK_RIDE);
   });
 });

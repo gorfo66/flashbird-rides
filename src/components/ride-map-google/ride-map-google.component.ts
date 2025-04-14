@@ -64,43 +64,7 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
       this.rideSubject.pipe(
         filter(ride => !!ride && !!ride.logs),
         distinctUntilChanged()
-      ).subscribe(async (ride) => {
-        const logs = ride!.logs!;
-
-        const { AltitudeMode, Map3DElement, Polyline3DElement } = await google.maps.importLibrary("maps3d") as google.maps.Maps3DLibrary;
-
-        this.map3d = new Map3DElement()
-        this.map3d.center = this.getCenter(logs);
-        this.map3d.range = ride!.distance > 100000 ? 50000 : 10000;
-        this.map3d.tilt = 60;
-        this.map3d.heading = 0;
-        (this.map3d as any).mode = this.mode;
-
-        logs.forEach((log, index) => {
-          const next = logs[index + 1];
-          if (next) {
-            const line = new Polyline3DElement();
-            line.coordinates = [
-              {
-                lat: log.latitude,
-                lng: log.longitude
-              },
-              {
-                lat: next.latitude,
-                lng: next.longitude
-              }
-            ];
-            line.altitudeMode = AltitudeMode.CLAMP_TO_GROUND;
-            line.strokeColor = getSpeedZoneInfo(getSpeedZone(log.speed)).color;
-            line.strokeWidth = 5;
-            line.strokeOpacity = 0.3;
-            this.map3d.append(line);
-          }
-        });
-
-        this.renderer.appendChild(this.map?.nativeElement, this.map3d);
-
-      })
+      ).subscribe(this.renderMap)
     );
   }
 
@@ -122,6 +86,47 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
   private updateModeValue() {
     if (this.map3d) {
       this.renderer.setAttribute(this.map3d, 'mode', this.mode)
+    }
+  }
+
+
+  private async renderMap(ride: Ride | undefined) {
+    if (ride) {
+      const logs = ride!.logs!;
+
+      const { AltitudeMode, Map3DElement, Polyline3DElement } = await google.maps.importLibrary("maps3d") as google.maps.Maps3DLibrary;
+
+      this.map3d = new Map3DElement()
+      this.map3d.center = this.getCenter(logs);
+      this.map3d.range = ride!.distance > 100000 ? 50000 : 10000;
+      this.map3d.tilt = 60;
+      this.map3d.heading = 0;
+      (this.map3d as any).mode = this.mode;
+
+      logs.forEach((log, index) => {
+        const next = logs[index + 1];
+        if (next) {
+          const line = new Polyline3DElement();
+          line.coordinates = [
+            {
+              lat: log.latitude,
+              lng: log.longitude
+            },
+            {
+              lat: next.latitude,
+              lng: next.longitude
+            }
+          ];
+          line.altitudeMode = AltitudeMode.CLAMP_TO_GROUND;
+          line.strokeColor = getSpeedZoneInfo(getSpeedZone(log.speed)).color;
+          line.strokeWidth = 5;
+          line.strokeOpacity = 0.3;
+          this.map3d.append(line);
+        }
+      });
+
+      this.renderer.appendChild(this.map?.nativeElement, this.map3d);
+
     }
   }
 

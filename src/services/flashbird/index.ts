@@ -1,3 +1,3 @@
-export * from './ride.service';
-export * from './authentication.service';
+export * from './authentication/index';
+export * from './ride/index';
 export * from  './constants';
