@@ -9,21 +9,22 @@
 
         <mat-form-field class = 'field'>
           <mat-label>Email</mat-label>
-          <input matInput formControlName="login">
-          <mat-error *ngIf="(login.errors || {})['required']">You need to provide an email</mat-error>
-          <mat-error *ngIf="(login.errors || {})['email']">The email format is invalid</mat-error>
+          <input matInput formControlName="login" autocomplete="email">
+          <mat-error *ngIf="(login.errors || {})['required']">Vous devez fournir un email</mat-error>
+          <mat-error *ngIf="(login.errors || {})['email']">Le format de l'email est invalide</mat-error>
         </mat-form-field>
 
         <mat-form-field class = 'field'>
-          <mat-label>Password</mat-label>
-          <input matInput type = 'password' formControlName="password">
+          <mat-label>Mot de passe</mat-label>
+          <input matInput type = 'password' formControlName="password" autocomplete="current-password">
+          <mat-error *ngIf="(password.errors || {})['required']">Vous devez fournir un mot de passe</mat-error>
         </mat-form-field>
 
       </div>
 
     </mat-card-content>
     <mat-card-actions>
-      <button type = 'submit' mat-button>Connect</button>
+      <button type = 'submit' mat-button>Se connecter</button>
     </mat-card-actions>
   </mat-card>
 </div>

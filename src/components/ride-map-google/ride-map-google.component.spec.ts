@@ -11,6 +11,7 @@ import { AltitudeMode, Map3DElement, Polyline3DElement } from './google-librarie
 
 describe('GoogleMapComponent', () => {
   let component: RideMapGoogleComponent;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let fullComponent: any;
   let fixture: ComponentFixture<RideMapGoogleComponent>;
   let componentFixture: RideMapGoogleComponentFixture;
@@ -31,6 +32,7 @@ describe('GoogleMapComponent', () => {
     fixture = TestBed.createComponent(RideMapGoogleComponent);
     fixture.componentRef.setInput('ride', MOCK_RIDE);
     component = fixture.componentInstance;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fullComponent = (component as any);
     spyRenderMap = spyOn(fullComponent, 'renderMap').and.callThrough();
     fullComponent.loadLibraries = () => ({

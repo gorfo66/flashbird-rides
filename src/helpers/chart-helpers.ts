@@ -2,7 +2,7 @@ import { Chart, ChartConfiguration } from "chart.js/auto";
 import { Log } from "../models";
 import { interpolate } from "./ride-helpers";
 
-export const createCharts = (logs: Log[], interpolation: boolean, domElements: { speed: any; tilt: any }): { speed?: Chart; tilt?: Chart } => {
+export const createCharts = (logs: Log[], interpolation: boolean, domElements: { speed: HTMLCanvasElement; tilt: HTMLCanvasElement }): { speed?: Chart; tilt?: Chart } => {
 
   const style = getComputedStyle(document.body);
   const output: { speed?: Chart; tilt?: Chart } = {};
@@ -58,6 +58,7 @@ export const createCharts = (logs: Log[], interpolation: boolean, domElements: {
     tension: 0.5,
     borderWidth: 1,
     borderColor: color,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     backgroundColor: function (context: any) {
       const chart = context.chart;
       const { ctx, chartArea } = chart;

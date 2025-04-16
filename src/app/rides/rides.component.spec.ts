@@ -15,6 +15,8 @@ import { MatCardModule } from '@angular/material/card';
 import { selectRides, selectUiState } from '../../store';
 import { MOCK_RIDES } from '../../../mocks/rides';
 import { RidesComponentFixture } from './rides.fixture';
+import { DefaultProjectorFn, MemoizedSelector } from '@ngrx/store';
+import { UiState } from '../../models';
 
 registerLocaleData(localeFr, 'fr-FR');
 
@@ -24,7 +26,7 @@ describe('RidesComponent', () => {
   let componentFixture: RidesComponentFixture;
   let store: MockStore;
   let router: Router;
-  let storeUiStageOverride: any;
+  let storeUiStageOverride: MemoizedSelector<object, UiState, DefaultProjectorFn<UiState>>;
   
   beforeEach(async () => {
     await TestBed.configureTestingModule({
