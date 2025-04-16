@@ -106,6 +106,7 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
       this.map3d.range = ride!.distance > 100000 ? 50000 : 10000;
       this.map3d.tilt = 60;
       this.map3d.heading = 0;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (this.map3d as any).mode = this.mode;
 
       logs.forEach((log, index) => {

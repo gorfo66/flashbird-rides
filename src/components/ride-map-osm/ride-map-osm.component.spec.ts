@@ -5,8 +5,10 @@ import { MOCK_RIDE } from '../../../mocks/ride';
 
 describe('RideMapOsmComponent', () => {
   let component: RideMapOsmComponent;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let fullComponent: any;
   let fixture: ComponentFixture<RideMapOsmComponent>;
-
+  
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [RideMapOsmComponent]
@@ -16,7 +18,9 @@ describe('RideMapOsmComponent', () => {
     fixture = TestBed.createComponent(RideMapOsmComponent);
     fixture.componentRef.setInput('ride', MOCK_RIDE);
     component = fixture.componentInstance;
-    (component as any).renderMap = jasmine.createSpy('renderMap');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    fullComponent = (component as any);
+    fullComponent.renderMap = jasmine.createSpy('renderMap');
     fixture.detectChanges();
   });
 
@@ -25,6 +29,6 @@ describe('RideMapOsmComponent', () => {
   });
 
   it('should call the renderMap method', () => {
-    expect((component as any).renderMap).toHaveBeenCalledOnceWith(MOCK_RIDE);
+    expect(fullComponent.renderMap).toHaveBeenCalledOnceWith(MOCK_RIDE);
   });
 });

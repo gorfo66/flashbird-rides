@@ -18,6 +18,8 @@ import { LOCALE_ID } from '@angular/core';
 
 import localeFr from '@angular/common/locales/fr';
 import { registerLocaleData } from '@angular/common';
+import { MemoizedSelector, DefaultProjectorFn } from '@ngrx/store';
+import { Ride } from '../../models';
 registerLocaleData(localeFr, 'fr-FR');
 
 describe('RideComponent', () => {
@@ -26,7 +28,7 @@ describe('RideComponent', () => {
   let componentFixture: RideComponentFixture;
   let store: MockStore;
   let router: Router;
-  let mockSelectRideOverride: any;
+  let mockSelectRideOverride: MemoizedSelector<object, Ride, DefaultProjectorFn<Ride>>;
 
   const rideServiceFixture = new RideServiceFixture()
 
