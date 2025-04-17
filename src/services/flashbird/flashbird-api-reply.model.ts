@@ -1,4 +1,4 @@
-import { Ride } from "./ride";
+import { Ride } from "../../models"
 
 export interface AuthenticationReply {
   data?: {
@@ -7,12 +7,6 @@ export interface AuthenticationReply {
     }
   }
 }
-
-export interface AuthenticationResult {
-  token: string | undefined;
-  error?: string | undefined
-}
-
 
 export interface GetRidesReply {
   data: {

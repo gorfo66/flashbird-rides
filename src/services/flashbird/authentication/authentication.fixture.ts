@@ -1,4 +1,3 @@
-import { of } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 
 
@@ -10,11 +9,9 @@ export class AuthenticationServiceFixture implements Readonly<AuthenticationServ
   public checkValidity: jasmine.Spy;
 
   constructor() { 
-    this.getToken = jasmine.createSpy('getToken').and.returnValue(of({
-      token: MOCK_TOKEN
-    }));
+    this.getToken = jasmine.createSpy('getToken');
 
-    this.checkValidity = jasmine.createSpy('checkValidity').and.returnValue(true);
+    this.checkValidity = jasmine.createSpy('checkValidity');
   }
 
 }

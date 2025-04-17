@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, mergeMap, Observable, of } from 'rxjs';
-import { Log, Ride, GetRideReply, GetRidesReply, ExportReply } from '../../../models';
+import { Log, Ride } from '../../../models';
 import { ElevationService } from '../../elevation/elevation.service';
 import { flashbirdUrl } from '../constants';
 import { distanceInKmBetweenEarthCoordinates } from '../../../helpers';
+import { GetRidesReply, GetRideReply, ExportReply } from '../flashbird-api-reply.model';
 
 
 const postProcessRide = (ride: Ride): Ride => {

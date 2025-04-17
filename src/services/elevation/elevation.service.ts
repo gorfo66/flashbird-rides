@@ -2,15 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, of, timeout } from 'rxjs';
 import { Log } from '../../models';
-
-interface OpenElevationReply {
-  results: {
-    latitude: number,
-    longitude: number,
-    elevation: number
-  }[]
-}
-
+import { OpenElevationReply } from './open-elevation-reply.model';
 
 @Injectable({
   providedIn: 'root'

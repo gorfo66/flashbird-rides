@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { selectToken } from '../../store';
 import { Router, RouterModule } from '@angular/router';
+import { firstValueFrom, of } from 'rxjs';
 
 
 describe('LoginComponent', () => {
@@ -18,6 +19,8 @@ describe('LoginComponent', () => {
   let store: MockStore;
   let router: Router;
   const authenticationService = new AuthenticationServiceFixture();
+  let dispatchSpy: jasmine.Spy;
+  let routerSpy: jasmine.Spy;
 
   beforeEach(async () => {
 
@@ -48,7 +51,9 @@ describe('LoginComponent', () => {
     store = TestBed.inject(MockStore);
     store.overrideSelector(selectToken, MOCK_TOKEN);
     
-    router = TestBed.inject(Router)
+    router = TestBed.inject(Router);
+    dispatchSpy = spyOn(store, 'dispatch').and.callThrough();
+    routerSpy = spyOn(router, 'navigate').and.callThrough();
 
     fixture.detectChanges();
   });
@@ -58,8 +63,9 @@ describe('LoginComponent', () => {
   });
 
   it('should update the store once succesfully submitted', fakeAsync(() => {
-    const dispatchSpy = spyOn(store, 'dispatch').and.callThrough();
-    const routerSpy = spyOn(router, 'navigate').and.callThrough();
+    authenticationService.getToken.and.returnValue(of({
+      token: MOCK_TOKEN
+    }));
     
     const login = 'login@domain.com';
     const password = 'password';
@@ -81,4 +87,25 @@ describe('LoginComponent', () => {
     // Redirect to the rides page
     expect(routerSpy).toHaveBeenCalledOnceWith(['rides']);
   }));
+
+  it('should show an error in case of wrong authentication', fakeAsync(async () => {
+    authenticationService.getToken.and.returnValue(of({
+      token: undefined,
+      error: 'wrong credentials'
+    }));
+
+    const login = 'login@domain.com';
+    const password = 'password';
+    component.form.controls['login'].setValue(login);
+    component.form.controls['password'].setValue(password);
+    component.form.markAllAsTouched();
+    component.onSubmit();
+
+    tick();
+
+    const errorMessage = await firstValueFrom(component.errorMessage$);
+    expect(errorMessage).toEqual('wrong credentials');
+    expect(dispatchSpy).not.toHaveBeenCalled();
+    expect(routerSpy).not.toHaveBeenCalled();
+  }))
 });

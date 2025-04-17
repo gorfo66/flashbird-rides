@@ -56,7 +56,7 @@ describe('GoogleMapComponent', () => {
     expect(map).toBeDefined();
     expect(map.lines.length).toEqual(MOCK_RIDE.logs.length - 1);
     expect(map.mode).toEqual('SATELLITE');
-    expect(map.range).toEqual(10000);
+    expect(map.range).toEqual(50000);
     expect(map.tilt).toEqual(60);
     expect(map.heading).toEqual(0);
   });

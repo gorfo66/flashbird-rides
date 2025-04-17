@@ -41,7 +41,11 @@ export class RideComponentFixture {
   }
 
   public getInterpolationCheckbox() {
-    return this.elt.query(By.css('.chart-controls mat-checkbox'));
+    return this.elt.query(By.css('.chart-controls mat-checkbox input'));
+  }
+
+  public toggleInterpolationCheckbox() {
+    return this.getInterpolationCheckbox().nativeElement.click();
   }
 
   private getStatisticValue(selector: string) {

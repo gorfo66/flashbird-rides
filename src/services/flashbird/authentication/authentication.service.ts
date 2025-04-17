@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { flashbirdUrl } from '../constants';
-import { AuthenticationReply, AuthenticationResult } from '../../../models';
+import { AuthenticationResult } from '../../../models';
+import { AuthenticationReply } from '../flashbird-api-reply.model';
 
 @Injectable({
   providedIn: 'root'

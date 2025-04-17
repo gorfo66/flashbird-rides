@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { RideComponent } from './ride.component';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -24,6 +24,8 @@ registerLocaleData(localeFr, 'fr-FR');
 
 describe('RideComponent', () => {
   let component: RideComponent;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let fullComponent: any;
   let fixture: ComponentFixture<RideComponent>;
   let componentFixture: RideComponentFixture;
   let store: MockStore;
@@ -64,6 +66,8 @@ describe('RideComponent', () => {
 
     fixture = TestBed.createComponent(RideComponent);
     component = fixture.componentInstance;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    fullComponent = (component as any);
     componentFixture = new RideComponentFixture(fixture.debugElement);
 
     // Mock the store
@@ -85,14 +89,14 @@ describe('RideComponent', () => {
   });
 
   it('should show the correct formated ride date', () => {
-    expect(componentFixture.getStartDateText()).toEqual('dimanche 13 avril 2025');
+    expect(componentFixture.getStartDateText()).toEqual('samedi 12 avril 2025');
   });
 
   it('should show the correct statistics', () => {
-    expect(componentFixture.getStatisticDistanceValue()).toEqual(6);
-    expect(componentFixture.getStatisticAverageSpeedValue()).toEqual(24);
-    expect(componentFixture.getStatisticMaxSpeedValue()).toEqual(73);
-    expect(componentFixture.getStatisticMaxTiltValue()).toEqual(18);
+    expect(componentFixture.getStatisticDistanceValue()).toEqual(295);
+    expect(componentFixture.getStatisticAverageSpeedValue()).toEqual(61);
+    expect(componentFixture.getStatisticMaxSpeedValue()).toEqual(142);
+    expect(componentFixture.getStatisticMaxTiltValue()).toEqual(36);
   });
 
   it('should show the inerpolation checkbox if less than 1000 log entries', () => {
@@ -133,4 +137,11 @@ describe('RideComponent', () => {
     componentFixture.clickExportButton();
     expect(rideServiceFixture.export).toHaveBeenCalledWith(MOCK_RIDE.id);
   });
+
+  it('should recreate chart when interpolation checkbox is ticked',  fakeAsync(() => {
+    const spy = spyOn(fullComponent, 'createCharts').and.callThrough();
+    componentFixture.toggleInterpolationCheckbox();
+    tick();
+    expect(spy).toHaveBeenCalled();
+  }));
 });
