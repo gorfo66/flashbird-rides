@@ -13,11 +13,19 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      dev-dependencies:
+      all-dependencies:
         patterns:
           - "@angular*"
+          - "angular-eslint"
           - "@ngrx*"
           - "rxjs"
-          - "typescript"
+          - "typescript*"
           - "@types*"
+          - "chart.js"
+          - "leaflet"
+          - "tslib"
+          - "zone.js"
+          - "eslint"
+          - "jasmine-core"
+          - "karma*"
 
