@@ -13,7 +13,7 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      all-dependencies:
+      dev-dependencies:
         patterns:
           - "@angular*"
           - "angular-eslint"
