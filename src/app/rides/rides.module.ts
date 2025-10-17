@@ -1,13 +1,33 @@
-import { NgModule } from "@angular/core";
-import { RidesComponent } from "./rides.component";
-import { RidesGuard } from "./rides.guard";
-import { RouterModule } from "@angular/router";
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCardModule } from '@angular/material/card';
-import { ReactiveFormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
-import { StatisticTileModule } from "../../components";
+import {
+  NgModule
+} from "@angular/core"
+import {
+  RidesComponent
+} from "./rides.component"
+import {
+  RidesGuard
+} from "./rides.guard"
+import {
+  RouterModule
+} from "@angular/router"
+import {
+  MatButtonModule
+} from '@angular/material/button'
+import {
+  MatButtonToggleModule
+} from '@angular/material/button-toggle'
+import {
+  MatCardModule
+} from '@angular/material/card'
+import {
+  ReactiveFormsModule
+} from "@angular/forms"
+import {
+  CommonModule
+} from "@angular/common"
+import {
+  StatisticTileModule
+} from "../../components"
 
 
 @NgModule({

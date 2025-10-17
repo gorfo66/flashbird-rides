@@ -1,7 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed
+} from '@angular/core/testing'
 
-import { StatisticTileComponent } from './statistic-tile.component';
-import { StatisticTileComponentFixture } from './statistic-tile.fixture';
+import {
+  StatisticTileComponent
+} from './statistic-tile.component'
+import {
+  StatisticTileComponentFixture
+} from './statistic-tile.fixture'
 
 describe('StatisticTileComponent', () => {
   let component: StatisticTileComponent;
@@ -12,7 +19,7 @@ describe('StatisticTileComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [StatisticTileComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(StatisticTileComponent);
     component = fixture.componentInstance;

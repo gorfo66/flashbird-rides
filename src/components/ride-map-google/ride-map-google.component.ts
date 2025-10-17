@@ -1,8 +1,35 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
-import { Log, Ride } from '../../models';
-import { BehaviorSubject, distinctUntilChanged, filter, Subscription } from 'rxjs';
-import { getSpeedZone, getSpeedZoneInfo } from '../../helpers';
-import { FormControl } from '@angular/forms';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  Renderer2,
+  SimpleChanges,
+  ViewChild,
+  inject
+} from '@angular/core'
+import {
+  Log,
+  Ride
+} from '../../models'
+import {
+  BehaviorSubject,
+  Subscription,
+  distinctUntilChanged,
+  filter
+} from 'rxjs'
+import {
+  getSpeedZone,
+  getSpeedZoneInfo
+} from '../../helpers'
+import {
+  FormControl
+} from '@angular/forms'
 
 @Component({
   selector: 'app-ride-map-google',
@@ -12,6 +39,7 @@ import { FormControl } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewInit {
+  private renderer = inject(Renderer2);
 
   @Input() ride?: Ride;
   private rideSubject = new BehaviorSubject<Ride | undefined>(undefined);
@@ -35,7 +63,7 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
 
   public isFullScreen = false;
 
-  constructor(private renderer: Renderer2) {
+  constructor() {
     this.subscriptions.push(
       this.showLabelsCheckbox.valueChanges.subscribe((change) => {
         this.showLabelsUpdated.emit(change);

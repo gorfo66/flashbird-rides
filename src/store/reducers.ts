@@ -1,6 +1,20 @@
-import { ActionReducer, createReducer, INIT, on } from '@ngrx/store';
-import { upsertAuthToken, upsertRide, upsertRides, upsertUiState } from './actions';
-import { Ride, RootState, UiState } from '../models';
+import {
+  ActionReducer,
+  INIT,
+  createReducer,
+  on
+} from '@ngrx/store'
+import {
+  Ride,
+  RootState,
+  UiState
+} from '../models'
+import {
+  upsertAuthToken,
+  upsertRide,
+  upsertRides,
+  upsertUiState
+} from './actions'
 
 export const ridesReducer = createReducer<Ride[] | undefined>(
   undefined,

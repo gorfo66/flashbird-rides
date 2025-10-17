@@ -1,6 +1,10 @@
 
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import {
+  By
+} from '@angular/platform-browser'
+import {
+  DebugElement
+} from '@angular/core'
 
 
 export class RidesComponentFixture {

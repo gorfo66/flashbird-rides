@@ -1,5 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Ride } from '../../models';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output
+} from '@angular/core'
+import {
+  Ride
+} from '../../models'
 
 @Component({
   selector: 'app-ride-map-google',

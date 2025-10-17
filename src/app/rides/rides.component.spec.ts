@@ -1,22 +1,66 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { FilterType, RidesComponent } from './rides.component';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { Router, RouterModule } from '@angular/router';
-import { RideService } from '../../services';
-import { RideServiceFixture } from '../../services/flashbird/ride/ride.fixture';
-import { LOCALE_ID } from '@angular/core';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick
+} from '@angular/core/testing'
+import {
+  FilterType,
+  RidesComponent
+} from './rides.component'
+import {
+  MockStore,
+  provideMockStore
+} from '@ngrx/store/testing'
+import {
+  Router,
+  RouterModule
+} from '@angular/router'
+import {
+  RideService
+} from '../../services'
+import {
+  RideServiceFixture
+} from '../../services/flashbird/ride/ride.fixture'
+import {
+  LOCALE_ID
+} from '@angular/core'
 import localeFr from '@angular/common/locales/fr';
-import { registerLocaleData } from '@angular/common';
-import { MockStatisticTileComponent } from '../../components/mocks';
-import { MatButtonModule } from '@angular/material/button';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCardModule } from '@angular/material/card';
-import { selectRides, selectUiState } from '../../store';
-import { MOCK_RIDES } from '../../../mocks/rides';
-import { RidesComponentFixture } from './rides.fixture';
-import { DefaultProjectorFn, MemoizedSelector } from '@ngrx/store';
-import { UiState } from '../../models';
+import {
+  registerLocaleData
+} from '@angular/common'
+import {
+  MockStatisticTileComponent
+} from '../../components/mocks'
+import {
+  MatButtonModule
+} from '@angular/material/button'
+import {
+  ReactiveFormsModule
+} from '@angular/forms'
+import {
+  MatButtonToggleModule
+} from '@angular/material/button-toggle'
+import {
+  MatCardModule
+} from '@angular/material/card'
+import {
+  selectRides,
+  selectUiState
+} from '../../store'
+import {
+  MOCK_RIDES
+} from '../../../mocks/rides'
+import {
+  RidesComponentFixture
+} from './rides.fixture'
+import {
+  DefaultProjectorFn,
+  MemoizedSelector
+} from '@ngrx/store'
+import {
+  UiState
+} from '../../models'
 
 registerLocaleData(localeFr, 'fr-FR');
 
@@ -47,7 +91,8 @@ describe('RidesComponent', () => {
           provide: RideService,
           useValue: RideServiceFixture
         },
-        { provide: LOCALE_ID, useValue: 'fr-FR' }
+        { provide: LOCALE_ID,
+          useValue: 'fr-FR' }
       ]
     })
       .compileComponents();
@@ -96,7 +141,8 @@ describe('RidesComponent', () => {
     componentFixture.clickFilterLong();
     tick();
 
-    expect(spy).toHaveBeenCalledWith({ uiState: { filter: 'long' }, type: '[Ui] upsert state' });
+    expect(spy).toHaveBeenCalledWith({ uiState: { filter: 'long' },
+      type: '[Ui] upsert state' });
   }));
 
 

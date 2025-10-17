@@ -1,5 +1,11 @@
-import { createAction, props } from "@ngrx/store";
-import { Ride, UiState } from "../models";
+import {
+  Ride,
+  UiState
+} from "../models"
+import {
+  createAction,
+  props
+} from "@ngrx/store"
 
 export const upsertAuthToken = createAction(
   '[Auth] Upsert token',

@@ -1,9 +1,17 @@
-import { TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  TestBed
+} from '@angular/core/testing'
+import {
+  provideHttpClient
+} from '@angular/common/http'
+import {
+  provideHttpClientTesting
+} from '@angular/common/http/testing'
 
 
-import { ElevationService } from './elevation.service';
+import {
+  ElevationService
+} from './elevation.service'
 
 describe('ElevationService', () => {
   let service: ElevationService;

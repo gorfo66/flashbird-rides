@@ -1,13 +1,34 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed
+} from '@angular/core/testing'
 
-import { RideMapGoogleComponent } from './ride-map-google.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
-import { RideMapGoogleComponentFixture } from './ride-map-google.fixture';
-import { MOCK_RIDE } from '../../../mocks/ride';
-import { AltitudeMode, Map3DElement, Polyline3DElement } from './google-libraries.mock';
+import {
+  RideMapGoogleComponent
+} from './ride-map-google.component'
+import {
+  ReactiveFormsModule
+} from '@angular/forms'
+import {
+  MatButtonModule
+} from '@angular/material/button'
+import {
+  MatCheckboxModule
+} from '@angular/material/checkbox'
+import {
+  MatIconModule
+} from '@angular/material/icon'
+import {
+  RideMapGoogleComponentFixture
+} from './ride-map-google.fixture'
+import {
+  MOCK_RIDE
+} from '../../../mocks/ride'
+import {
+  AltitudeMode,
+  Map3DElement,
+  Polyline3DElement
+} from './google-libraries.mock'
 
 describe('GoogleMapComponent', () => {
   let component: RideMapGoogleComponent;

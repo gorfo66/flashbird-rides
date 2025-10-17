@@ -1,5 +1,12 @@
-import { Log, Ride, SpeedZone } from "../models";
-import { average, degreesToRadians } from "./data-helpers";
+import {
+  Log,
+  Ride,
+  SpeedZone
+} from "../models"
+import {
+  average,
+  degreesToRadians
+} from "./data-helpers"
 
 
 export const getSpeedArray = (ride: Ride): number[] | undefined => {
@@ -80,25 +87,25 @@ export const getSpeedZone = (speed: number): SpeedZone => {
 
 export const getSpeedZoneInfo = (zone: SpeedZone): { color: string; title: string; description: string } => {
   switch (zone) {
-    case SpeedZone.city: return {
-      title: 'Ville',
-      description: 'Vitesse inférieure ou égale à 50 km/h',
-      color: 'blue'
-    };
-    case SpeedZone.road: return {
-      title: 'Route',
-      description: 'Vitesse entre 50 km/h et 90 km/h',
-      color: 'darkorange'
-    };
-    case SpeedZone.highway: return {
-      title: 'Voie rapide',
-      description: 'Vitesse supérieure à 90 km/h',
-      color: 'red'
-    };
-    case SpeedZone.overlimit: return {
-      title: 'Hors limites',
-      description: 'Vitesse supérieure à 130 km/h',
-      color: 'black'
-    };
+  case SpeedZone.city: return {
+    title: 'Ville',
+    description: 'Vitesse inférieure ou égale à 50 km/h',
+    color: 'blue'
+  };
+  case SpeedZone.road: return {
+    title: 'Route',
+    description: 'Vitesse entre 50 km/h et 90 km/h',
+    color: 'darkorange'
+  };
+  case SpeedZone.highway: return {
+    title: 'Voie rapide',
+    description: 'Vitesse supérieure à 90 km/h',
+    color: 'red'
+  };
+  case SpeedZone.overlimit: return {
+    title: 'Hors limites',
+    description: 'Vitesse supérieure à 130 km/h',
+    color: 'black'
+  };
   }
 }

@@ -1,7 +1,14 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed
+} from '@angular/core/testing'
 
-import { RideMapOsmComponent } from './ride-map-osm.component';
-import { MOCK_RIDE } from '../../../mocks/ride';
+import {
+  RideMapOsmComponent
+} from './ride-map-osm.component'
+import {
+  MOCK_RIDE
+} from '../../../mocks/ride'
 
 describe('RideMapOsmComponent', () => {
   let component: RideMapOsmComponent;
@@ -13,7 +20,7 @@ describe('RideMapOsmComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [RideMapOsmComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(RideMapOsmComponent);
     fixture.componentRef.setInput('ride', MOCK_RIDE);

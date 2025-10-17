@@ -1,7 +1,15 @@
-import { RideService } from './ride.service';
-import { MOCK_RIDE } from '../../../../mocks/ride';
-import { MOCK_RIDES } from '../../../../mocks/rides';
-import { of } from 'rxjs';
+import {
+  RideService
+} from './ride.service'
+import {
+  MOCK_RIDE
+} from '../../../../mocks/ride'
+import {
+  MOCK_RIDES
+} from '../../../../mocks/rides'
+import {
+  of
+} from 'rxjs'
 
 export class RideServiceFixture implements Readonly<RideService> {
 

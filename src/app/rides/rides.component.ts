@@ -1,9 +1,31 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { selectRides, selectUiState, upsertUiState } from '../../store';
-import { combineLatest, map, Observable, Subscription, take } from 'rxjs';
-import { Ride } from '../../models';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  inject
+} from '@angular/core'
+import {
+  Store
+} from '@ngrx/store'
+import {
+  selectRides,
+  selectUiState,
+  upsertUiState
+} from '../../store'
+import {
+  Observable,
+  Subscription,
+  combineLatest,
+  map,
+  take
+} from 'rxjs'
+import {
+  Ride
+} from '../../models'
+import {
+  FormBuilder,
+  FormGroup
+} from '@angular/forms'
 
 export enum FilterType {
   all = 'all', 
@@ -19,6 +41,8 @@ export enum FilterType {
   styleUrl: './rides.component.scss'
 })
 export class RidesComponent implements OnDestroy, OnInit {
+  private store = inject(Store);
+
 
   private subscriptions: Subscription[] = [];
   private currentFilter$: Observable<string>;
@@ -29,7 +53,9 @@ export class RidesComponent implements OnDestroy, OnInit {
   public distancePerMonth$: Observable<number>;
   public readonly filterForm: FormGroup
  
-  constructor(private store: Store, formBuilder: FormBuilder) {
+  constructor() {
+    const formBuilder = inject(FormBuilder);
+
     this.rides$ = this.store.select(selectRides);
     this.currentFilter$ = this.store.select(selectUiState).pipe(map((uiState) => uiState.filter || FilterType.all));
 

@@ -1,14 +1,59 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, Subscription, take } from 'rxjs';
-import { Log, Ride, SpeedZone } from '../../models';
-import { Store } from '@ngrx/store';
-import { selectRide, selectUiState, upsertUiState } from '../../store';
-import { average, createCharts, getSpeedArray, getSpeedZone, getSpeedZoneInfo, getTiltArray, max } from '../../helpers';
-import { RideService } from '../../services';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
-import { Chart } from 'chart.js';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject
+} from '@angular/core'
+import {
+  BehaviorSubject,
+  Observable,
+  Subscription,
+  combineLatest,
+  distinctUntilChanged,
+  filter,
+  map,
+  take
+} from 'rxjs'
+import {
+  Log,
+  Ride,
+  SpeedZone
+} from '../../models'
+import {
+  Store
+} from '@ngrx/store'
+import {
+  selectRide,
+  selectUiState,
+  upsertUiState
+} from '../../store'
+import {
+  average,
+  createCharts,
+  getSpeedArray,
+  getSpeedZone,
+  getSpeedZoneInfo,
+  getTiltArray,
+  max
+} from '../../helpers'
+import {
+  RideService
+} from '../../services'
+import {
+  MatSnackBar
+} from '@angular/material/snack-bar'
+import {
+  Router
+} from '@angular/router'
+import {
+  FormControl
+} from '@angular/forms'
+import {
+  Chart
+} from 'chart.js'
 
 @Component({
   selector: 'app-ride',
@@ -18,6 +63,11 @@ import { Chart } from 'chart.js';
   styleUrl: './ride.component.scss'
 })
 export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
+  private store = inject(Store);
+  private rideService = inject(RideService);
+  private snackBar = inject(MatSnackBar);
+  private router = inject(Router);
+
 
   public ride$: Observable<Ride>;
   public averageSpeed$: Observable<number>;
@@ -40,10 +90,7 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('tiltChart')
   private tiltChart: ElementRef | undefined;
 
-  constructor(private store: Store,
-    private rideService: RideService,
-    private snackBar: MatSnackBar,
-    private router: Router) {
+  constructor() {
     this.ride$ = this.store.select(selectRide).pipe(
       distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
     );
