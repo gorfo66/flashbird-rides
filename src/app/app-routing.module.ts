@@ -1,12 +1,26 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { RideComponent, RideGuard } from './ride';
-import { RidesComponent, RidesGuard } from './rides';
-import { LoginComponent } from './login';
+import {
+  NgModule
+} from '@angular/core'
+import {
+  RouterModule,
+  Routes
+} from '@angular/router'
+import {
+  RideComponent,
+  RideGuard
+} from './ride'
+import {
+  RidesComponent,
+  RidesGuard
+} from './rides'
+import {
+  LoginComponent
+} from './login'
 
 const routes: Routes = [
   {
-    path: 'login', component: LoginComponent
+    path: 'login',
+    component: LoginComponent
   },
   {
     path: 'rides',
@@ -18,7 +32,9 @@ const routes: Routes = [
     component: RideComponent,
     canActivate: [RideGuard]
   },
-  { path: '**', redirectTo: '/rides', pathMatch: 'full' },
+  { path: '**',
+    redirectTo: '/rides',
+    pathMatch: 'full' },
 ];
 
 @NgModule({

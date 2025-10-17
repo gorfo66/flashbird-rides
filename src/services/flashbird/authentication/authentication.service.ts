@@ -1,16 +1,27 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { flashbirdUrl } from '../constants';
-import { AuthenticationReply, AuthenticationResult } from '../../../models';
+import {
+  HttpClient
+} from '@angular/common/http'
+import {
+  Injectable,
+  inject
+} from '@angular/core'
+import {
+  Observable,
+  map
+} from 'rxjs'
+import {
+  flashbirdUrl
+} from '../constants'
+import {
+  AuthenticationReply,
+  AuthenticationResult
+} from '../../../models'
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-
-  constructor( private httpClient: HttpClient) { }
-
+  private httpClient = inject(HttpClient);
 
   public getToken(login: string, password: string): Observable<AuthenticationResult> {
     return this.httpClient.post<AuthenticationReply>(

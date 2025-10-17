@@ -1,4 +1,6 @@
-import { Ride } from "./ride";
+import {
+  Ride
+} from "./ride"
 
 export interface UiState {
   isPending?: boolean;

@@ -1,12 +1,25 @@
-import { Injectable } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { SwUpdate, VersionReadyEvent } from "@angular/service-worker";
-import { filter, interval } from "rxjs";
+import {
+  Injectable,
+  inject
+} from "@angular/core"
+import {
+  MatSnackBar
+} from "@angular/material/snack-bar"
+import {
+  SwUpdate,
+  VersionReadyEvent
+} from "@angular/service-worker"
+import {
+  filter,
+  interval
+} from "rxjs"
 
 @Injectable({ providedIn: 'root' })
 export class PromptUpdateService {
+  private updates = inject(SwUpdate);
+  private snackBar = inject(MatSnackBar);
 
-  constructor(private updates: SwUpdate, private snackBar: MatSnackBar) {
+  constructor() {
 
     const everyHour$ = interval(60000);
     everyHour$.subscribe(async () => {

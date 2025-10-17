@@ -1,10 +1,31 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthenticationService } from '../../services';
-import { BehaviorSubject, Subscription, take } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { upsertAuthToken } from '../../store';
-import { Router } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  inject
+} from '@angular/core'
+import {
+  FormControl,
+  FormGroup,
+  Validators
+} from '@angular/forms'
+import {
+  AuthenticationService
+} from '../../services'
+import {
+  BehaviorSubject,
+  Subscription,
+  take
+} from 'rxjs'
+import {
+  Store
+} from '@ngrx/store'
+import {
+  upsertAuthToken
+} from '../../store'
+import {
+  Router
+} from '@angular/router'
 
 @Component({
   selector: 'app-login-',
@@ -14,13 +35,17 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnDestroy {
+  private authService = inject(AuthenticationService);
+  private store = inject(Store);
+  private router = inject(Router);
+
   private subscriptions: Subscription[] = [];
   private errorMessageSubject = new BehaviorSubject<string>('');
   public errorMessage$ = this.errorMessageSubject.asObservable();
 
   public readonly form: FormGroup;
 
-  constructor(private authService: AuthenticationService, private store: Store, private router: Router) {
+  constructor() {
     this.form = new FormGroup({
       login: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', Validators.required)

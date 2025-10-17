@@ -1,4 +1,6 @@
-import { ElevationService } from './elevation.service';
+import {
+  ElevationService
+} from './elevation.service'
 
 export class ElevationServiceFixture implements Readonly<ElevationService> {
 

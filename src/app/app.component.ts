@@ -1,7 +1,18 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { map, Observable } from 'rxjs';
-import { selectUiState } from '../store';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject
+} from '@angular/core'
+import {
+  Store
+} from '@ngrx/store'
+import {
+  Observable,
+  map
+} from 'rxjs'
+import {
+  selectUiState
+} from '../store'
 
 @Component({
   selector: 'app-root',
@@ -11,10 +22,11 @@ import { selectUiState } from '../store';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
+  private store = inject(Store);
 
   public isPending$: Observable<boolean>;
 
-  constructor(private store: Store) {
+  constructor() {
     this.isPending$ = this.store.select(selectUiState).pipe(
       map((uiState) => uiState?.isPending || false));
   }

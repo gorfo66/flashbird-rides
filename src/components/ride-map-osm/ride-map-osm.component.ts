@@ -1,7 +1,27 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
-import { Ride } from '../../models';
-import { BehaviorSubject, distinctUntilChanged, filter, Subscription } from 'rxjs';
-import { getSpeedZone, getSpeedZoneInfo } from '../../helpers';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core'
+import {
+  Ride
+} from '../../models'
+import {
+  BehaviorSubject,
+  Subscription,
+  distinctUntilChanged,
+  filter
+} from 'rxjs'
+import {
+  getSpeedZone,
+  getSpeedZoneInfo
+} from '../../helpers'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import * as L from "leaflet/dist/leaflet-src.esm";

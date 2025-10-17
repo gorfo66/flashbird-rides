@@ -1,25 +1,68 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed
+} from '@angular/core/testing'
 
-import { RideComponent } from './ride.component';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { Router, RouterModule } from '@angular/router';
-import { RideService } from '../../services';
-import { RideServiceFixture } from '../../services/flashbird/ride/ride.fixture';
-import { selectRide } from '../../store';
-import { MOCK_RIDE } from '../../../mocks/ride';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatInputModule } from '@angular/material/input';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MockRideMapGoogleComponent, MockStatisticTileComponent } from '../../components/mocks';
-import { RideComponentFixture } from './ride.fixture';
-import { LOCALE_ID } from '@angular/core';
+import {
+  RideComponent
+} from './ride.component'
+import {
+  MockStore,
+  provideMockStore
+} from '@ngrx/store/testing'
+import {
+  Router,
+  RouterModule
+} from '@angular/router'
+import {
+  RideService
+} from '../../services'
+import {
+  RideServiceFixture
+} from '../../services/flashbird/ride/ride.fixture'
+import {
+  selectRide
+} from '../../store'
+import {
+  MOCK_RIDE
+} from '../../../mocks/ride'
+import {
+  ReactiveFormsModule
+} from '@angular/forms'
+import {
+  MatButtonModule
+} from '@angular/material/button'
+import {
+  MatCheckboxModule
+} from '@angular/material/checkbox'
+import {
+  MatInputModule
+} from '@angular/material/input'
+import {
+  MatSnackBarModule
+} from '@angular/material/snack-bar'
+import {
+  MockRideMapGoogleComponent,
+  MockStatisticTileComponent
+} from '../../components/mocks'
+import {
+  RideComponentFixture
+} from './ride.fixture'
+import {
+  LOCALE_ID
+} from '@angular/core'
 
 import localeFr from '@angular/common/locales/fr';
-import { registerLocaleData } from '@angular/common';
-import { MemoizedSelector, DefaultProjectorFn } from '@ngrx/store';
-import { Ride } from '../../models';
+import {
+  registerLocaleData
+} from '@angular/common'
+import {
+  DefaultProjectorFn,
+  MemoizedSelector
+} from '@ngrx/store'
+import {
+  Ride
+} from '../../models'
 registerLocaleData(localeFr, 'fr-FR');
 
 describe('RideComponent', () => {
@@ -57,7 +100,8 @@ describe('RideComponent', () => {
           provide: RideService,
           useValue: rideServiceFixture
         },
-        { provide: LOCALE_ID, useValue: 'fr-FR' }
+        { provide: LOCALE_ID,
+          useValue: 'fr-FR' }
       ]
     })
       .compileComponents();

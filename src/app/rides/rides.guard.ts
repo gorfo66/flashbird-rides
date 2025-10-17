@@ -1,13 +1,29 @@
-import { Injectable } from "@angular/core";
-import { CanActivate, GuardResult, MaybeAsync } from "@angular/router";
-import { map } from "rxjs";
-import { RideService } from "../../services";
-import { Store } from "@ngrx/store";
-import { upsertRides } from "../../store";
+import {
+  Injectable,
+  inject
+} from "@angular/core"
+import {
+  CanActivate,
+  GuardResult,
+  MaybeAsync
+} from "@angular/router"
+import {
+  map
+} from "rxjs"
+import {
+  RideService
+} from "../../services"
+import {
+  Store
+} from "@ngrx/store"
+import {
+  upsertRides
+} from "../../store"
 
 @Injectable()
 export class RidesGuard implements CanActivate {
-  constructor(private rideService: RideService, private store: Store) { }
+  private rideService = inject(RideService);
+  private store = inject(Store);
 
   canActivate(): MaybeAsync<GuardResult> {
 

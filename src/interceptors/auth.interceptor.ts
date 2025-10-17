@@ -1,15 +1,39 @@
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Router } from "@angular/router";
-import { firstValueFrom, from, lastValueFrom, Observable } from "rxjs";
-import { AuthenticationService, flashbirdUrl } from "../services";
-import { Store } from "@ngrx/store";
-import { selectToken, upsertAuthToken } from "../store";
+import {
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest
+} from "@angular/common/http"
+import {
+  Injectable,
+  inject
+} from "@angular/core"
+import {
+  Router
+} from "@angular/router"
+import {
+  Observable,
+  firstValueFrom,
+  from,
+  lastValueFrom
+} from "rxjs"
+import {
+  AuthenticationService,
+  flashbirdUrl
+} from "../services"
+import {
+  Store
+} from "@ngrx/store"
+import {
+  selectToken,
+  upsertAuthToken
+} from "../store"
 
 @Injectable()
 export class AuthHeaderInterceptor implements HttpInterceptor {
-
-  constructor(private router: Router, private store: Store, private authService: AuthenticationService) { }
+  private router = inject(Router);
+  private store = inject(Store);
+  private authService = inject(AuthenticationService);
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // convert promise to observable using 'from' operator

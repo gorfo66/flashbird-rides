@@ -1,6 +1,13 @@
-import { Chart, ChartConfiguration } from "chart.js/auto";
-import { Log } from "../models";
-import { interpolate } from "./ride-helpers";
+import {
+  Chart,
+  ChartConfiguration
+} from "chart.js/auto"
+import {
+  Log
+} from "../models"
+import {
+  interpolate
+} from "./ride-helpers"
 
 export const createCharts = (logs: Log[], interpolation: boolean, domElements: { speed: HTMLCanvasElement; tilt: HTMLCanvasElement }): { speed?: Chart; tilt?: Chart } => {
 

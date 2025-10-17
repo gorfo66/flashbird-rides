@@ -1,5 +1,9 @@
-import { of } from 'rxjs';
-import { AuthenticationService } from './authentication.service';
+import {
+  of
+} from 'rxjs'
+import {
+  AuthenticationService
+} from './authentication.service'
 
 
 export const MOCK_TOKEN = '123456';

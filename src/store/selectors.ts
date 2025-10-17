@@ -1,5 +1,10 @@
-import { createFeatureSelector } from "@ngrx/store";
-import { Ride, UiState } from "../models";
+import {
+  Ride,
+  UiState
+} from "../models"
+import {
+  createFeatureSelector
+} from "@ngrx/store"
 
 export const selectRides = createFeatureSelector<Ride[]>('rides');
 export const selectRide = createFeatureSelector<Ride>('ride');

@@ -1,7 +1,19 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { map, Observable, of, timeout } from 'rxjs';
-import { Log } from '../../models';
+import {
+  HttpClient
+} from '@angular/common/http'
+import {
+  Injectable,
+  inject
+} from '@angular/core'
+import {
+  Observable,
+  map,
+  of,
+  timeout
+} from 'rxjs'
+import {
+  Log
+} from '../../models'
 
 interface OpenElevationReply {
   results: {
@@ -16,11 +28,9 @@ interface OpenElevationReply {
   providedIn: 'root'
 })
 export class ElevationService {
+  private httpClient = inject(HttpClient);
 
   private readonly activated = true;
-
-  constructor(private httpClient: HttpClient) { }
-
 
   public getElevations(logs: Log[] | undefined): Observable<Log[]> {
     if (this.activated && !!logs) {

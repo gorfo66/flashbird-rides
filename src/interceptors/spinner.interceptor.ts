@@ -1,13 +1,29 @@
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Store } from "@ngrx/store";
-import { catchError, map, Observable } from "rxjs";
-import { upsertUiState } from "../store";
+import {
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+  HttpResponse
+} from "@angular/common/http"
+import {
+  Injectable,
+  inject
+} from "@angular/core"
+import {
+  Store
+} from "@ngrx/store"
+import {
+  Observable,
+  catchError,
+  map
+} from "rxjs"
+import {
+  upsertUiState
+} from "../store"
 
 @Injectable()
 export class SpinnerInterceptor implements HttpInterceptor {
-
-  constructor(private store: Store) { }
+  private store = inject(Store);
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     this.store.dispatch(upsertUiState({ uiState: { isPending: true} }));

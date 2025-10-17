@@ -1,15 +1,43 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick
+} from '@angular/core/testing'
 
-import { LoginComponent } from './login.component';
-import { AuthenticationService } from '../../services';
-import { AuthenticationServiceFixture, MOCK_TOKEN } from '../../services/flashbird/authentication/authentication.fixture';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { selectToken } from '../../store';
-import { Router, RouterModule } from '@angular/router';
+import {
+  LoginComponent
+} from './login.component'
+import {
+  AuthenticationService
+} from '../../services'
+import {
+  AuthenticationServiceFixture,
+  MOCK_TOKEN
+} from '../../services/flashbird/authentication/authentication.fixture'
+import {
+  ReactiveFormsModule
+} from '@angular/forms'
+import {
+  MatButtonModule
+} from '@angular/material/button'
+import {
+  MatCardModule
+} from '@angular/material/card'
+import {
+  MatInputModule
+} from '@angular/material/input'
+import {
+  MockStore,
+  provideMockStore
+} from '@ngrx/store/testing'
+import {
+  selectToken
+} from '../../store'
+import {
+  Router,
+  RouterModule
+} from '@angular/router'
 
 
 describe('LoginComponent', () => {
@@ -41,7 +69,7 @@ describe('LoginComponent', () => {
         }
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
@@ -75,7 +103,8 @@ describe('LoginComponent', () => {
 
     // Dispatch the token to the store
     expect(dispatchSpy).toHaveBeenCalledOnceWith(
-      { token: MOCK_TOKEN, type: '[Auth] Upsert token' }
+      { token: MOCK_TOKEN,
+        type: '[Auth] Upsert token' }
     );
 
     // Redirect to the rides page
