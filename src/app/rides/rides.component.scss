@@ -116,7 +116,7 @@ $timeline-color: var(--mat-sys-primary);
 
     div {
       position: relative;
-      background-color: var(--mdc-outlined-card-container-color, var(--mat-sys-surface));
+      background-color: var(--mat-card-outlined-container-color, var(--mat-sys-surface));
       display: inline-block;
       padding: 10px;
     }
