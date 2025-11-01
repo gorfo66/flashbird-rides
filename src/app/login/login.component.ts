@@ -66,15 +66,11 @@ export class LoginComponent implements OnDestroy {
             this.errorMessageSubject.next(reply.error);
             return;
           }
-
           this.store.dispatch(upsertAuthToken({ token: reply.token! }));
           this.router.navigate(['rides']);
         })
       )
     }
-
-
-
     return false;
   }
 
