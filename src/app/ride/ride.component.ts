@@ -96,7 +96,7 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
     );
 
     this.showMapLabels$ = this.store.select(selectUiState).pipe(
-      map((state) => state.showLabels || false),
+      map((state) => state?.showLabels || false),
       distinctUntilChanged()
     )
 
