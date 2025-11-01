@@ -1,57 +1,54 @@
-<div class = 'statistics-container'>
+<div class='statistics-container'>
   <app-statistic-tile label="Distance totale" unit="km" [value]="totalDistance$ | async"></app-statistic-tile>
-  <app-statistic-tile label="Distance moyenne par mois" unit="km" [value]="distancePerMonth$ | async"></app-statistic-tile>  
+  <app-statistic-tile label="Distance moyenne par mois" unit="km"
+    [value]="distancePerMonth$ | async"></app-statistic-tile>
 </div>
 
-<div class = 'filter-container'>
+<div class='filter-container'>
   <form [formGroup]="filterForm">
-    <mat-button-toggle-group name="filterValue" aria-label="Filtre" hideSingleSelectionIndicator="false" formControlName="filter">
+    <mat-button-toggle-group name="filterValue" aria-label="Filtre" hideSingleSelectionIndicator="false"
+      formControlName="filter">
       <mat-button-toggle [value]="FilterType.all">Toutes les sorties</mat-button-toggle>
       <mat-button-toggle [value]="FilterType.long">Sorties longues uniquement</mat-button-toggle>
     </mat-button-toggle-group>
   </form>
 </div>
 
-<div class='timeline' *ngIf="(filteredRides$ | async) as rides">
-  <div class='rides'>
-    <div class='ride' *ngFor="let ride of rides; index as i">
-
-      <div class='timeline-date'>
-        <ng-container *ngIf="i === 0 || (ride.startDate | date: 'ddMMM') !== (rides[i-1].startDate | date: 'ddMMM')">
+@if ((filteredRides$ | async); as rides) {
+  <div class='timeline'>
+    <div class='rides'>
+      @for (ride of rides; track ride; let i = $index) {
+      <div class='ride'>
+        <div class='timeline-date'>
+          @if (i === 0 || (ride.startDate | date: 'ddMMM') !== (rides[i-1].startDate | date: 'ddMMM')) {
           <span class='day'>{{ride.startDate | date: 'dd'}}</span>
           <span class='month'>{{ride.startDate | date: 'MMMM'}}</span>
-        </ng-container>
-
-      </div>
-
-      <div class='timeline-line'
-        [ngClass]="{'with-date' : i === 0 || (ride.startDate | date: 'ddMMM') !== (rides[i-1].startDate | date: 'ddMMM')}">
-      </div>
-
-      <mat-card class='card ride-card'>
-        <mat-card-content class='card-content'>
-
-          <div class='card-left'>
-            <div class='ride-name'>{{ride.name}}</div>
-            <div class='ride-info'>
-
-              <div class='location departure'><span>{{ride.startDate | date:
-                  'HH:mm'}}</span><span>{{ride.startLocation}}</span></div>
-              <div class='distance'>
-                <div>{{formatDistance(ride.distance)}}</div>
+          }
+        </div>
+        <div class='timeline-line'
+          [ngClass]="{'with-date' : i === 0 || (ride.startDate | date: 'ddMMM') !== (rides[i-1].startDate | date: 'ddMMM')}">
+        </div>
+        <mat-card class='card ride-card'>
+          <mat-card-content class='card-content'>
+            <div class='card-left'>
+              <div class='ride-name'>{{ride.name}}</div>
+              <div class='ride-info'>
+                <div class='location departure'><span>{{ride.startDate | date:
+                    'HH:mm'}}</span><span>{{ride.startLocation}}</span></div>
+                <div class='distance'>
+                  <div>{{formatDistance(ride.distance)}}</div>
+                </div>
+                <div class='location arrival'><span>{{ride.endDate | date:
+                    'HH:mm'}}</span><span>{{ride.endLocation}}</span></div>
               </div>
-              <div class='location arrival'><span>{{ride.endDate | date:
-                  'HH:mm'}}</span><span>{{ride.endLocation}}</span></div>
             </div>
-          </div>
-
-          <div class='card-right'>
-            <a [routerLink]="['/ride', ride.id]" mat-button>Détails</a>
-          </div>
-
-        </mat-card-content>
-
-      </mat-card>
+            <div class='card-right'>
+              <a [routerLink]="['/ride', ride.id]" mat-button>Détails</a>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      }
     </div>
   </div>
-</div>
+}

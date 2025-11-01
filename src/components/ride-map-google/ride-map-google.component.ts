@@ -11,7 +11,8 @@ import {
   Renderer2,
   SimpleChanges,
   ViewChild,
-  inject
+  inject,
+  signal
 } from '@angular/core'
 import {
   Log,
@@ -30,6 +31,9 @@ import {
 import {
   FormControl
 } from '@angular/forms'
+import {
+  ViewportScroller
+} from '@angular/common';
 
 @Component({
   selector: 'app-ride-map-google',
@@ -40,6 +44,8 @@ import {
 })
 export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewInit {
   private renderer = inject(Renderer2);
+
+  private viewportScroller = inject(ViewportScroller);
 
   @Input() ride?: Ride;
   private rideSubject = new BehaviorSubject<Ride | undefined>(undefined);
@@ -62,6 +68,8 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
 
 
   public isFullScreen = false;
+  public rendered = signal(false);
+
 
   constructor() {
     this.subscriptions.push(
@@ -159,11 +167,25 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
         }
       });
 
+      this.map3d.addEventListener('gmp-tiltchange', () => {
+        this.map3d.removeEventListener('gmp-tiltchange');
+        setTimeout(() => {
+          this.rendered.set(true);
+        }, 1000)
+      });
+      
       this.renderer.appendChild(this.map?.nativeElement, this.map3d);
     }
   }
 
   public toggleFullScreen(fullScreen: boolean) {
     this.isFullScreen = fullScreen;
+    this.viewportScroller.scrollToPosition([0, 0]);
+    if (fullScreen) {
+      document.body.style.overflow = 'hidden';
+    }
+    else {
+      document.body.style.overflow = 'auto';
+    }
   }
 }

@@ -54,6 +54,9 @@ import {
 import {
   Chart
 } from 'chart.js'
+import {
+  ViewportScroller
+} from '@angular/common';
 
 @Component({
   selector: 'app-ride',
@@ -67,6 +70,7 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
   private rideService = inject(RideService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
+  private viewportScroller = inject(ViewportScroller);
 
 
   public ride$: Observable<Ride>;
@@ -147,8 +151,6 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
       return totalDuration - drivingDuration;
     }));
 
-
-
     this.speedZones$ = this.ride$.pipe(
       filter((ride) => !!ride.logs),
       map((ride) => ride.logs),
@@ -206,7 +208,7 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
 
     // Workaround: when chart is re-created, chartjs scroll top.
     // We keep current scroll position and reapply at the bottom
-    const currentPageScroll = document.body.scrollTop || window.scrollY;
+    const currentPageScroll = this.viewportScroller.getScrollPosition()[1];
 
     // destroy charts if exist
     this.chartInstances?.speed?.destroy();
@@ -217,9 +219,8 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
       tilt: this.tiltChart!.nativeElement
     });
 
-
     // Scroll to previous position
-    window.scroll(0, currentPageScroll);
+    this.viewportScroller.scrollToPosition([0, currentPageScroll]);
   }
 
 

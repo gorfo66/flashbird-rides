@@ -60,7 +60,7 @@ export class RidesComponent implements OnDestroy, OnInit {
     this.currentFilter$ = this.store.select(selectUiState).pipe(map((uiState) => uiState.filter || FilterType.all));
 
     this.filteredRides$ = combineLatest([
-      this.store.select(selectRides),
+      this.rides$,
       this.currentFilter$
     ]).pipe(
       map( ([rides, filterType]) => {
