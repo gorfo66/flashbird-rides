@@ -38,8 +38,12 @@ import {
   Router,
   RouterModule
 } from '@angular/router'
-import { LoginComponentFixture } from './login.fixture'
-import { of } from 'rxjs'
+import {
+  LoginComponentFixture
+} from './login.fixture';
+import {
+  of
+} from 'rxjs';
 
 
 describe('LoginComponent', () => {
