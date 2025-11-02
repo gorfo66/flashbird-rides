@@ -1,32 +1,40 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-<div class = 'login-panel'>
-  <mat-card>
-    <mat-card-content>
-      <div class = 'card-content'>
+  <div class = 'login-panel'>
+    <mat-card>
+      <mat-card-content>
+        <div class = 'card-content'>
 
-        <div class = 'server-error' *ngIf="(errorMessage$ | async) as message">{{message}}</div>
+          @if ((errorMessage$ | async); as message) {
+            <div class = 'server-error'>{{message}}</div>
+          }
 
-        <mat-form-field class = 'field'>
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="login" autocomplete="email">
-          <mat-error *ngIf="(login.errors || {})['required']">Vous devez fournir un email</mat-error>
-          <mat-error *ngIf="(login.errors || {})['email']">Le format de l'email est invalide</mat-error>
-        </mat-form-field>
+          <mat-form-field class = 'field'>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="login" autocomplete="email">
+            @if ((login.errors || {})['required']) {
+              <mat-error>Vous devez fournir un email</mat-error>
+            }
+            @if ((login.errors || {})['email']) {
+              <mat-error>Le format de l'email est invalide</mat-error>
+            }
+          </mat-form-field>
 
-        <mat-form-field class = 'field'>
-          <mat-label>Mot de passe</mat-label>
-          <input matInput type = 'password' formControlName="password" autocomplete="current-password">
-          <mat-error *ngIf="(password.errors || {})['required']">Vous devez fournir un mot de passe</mat-error>
-        </mat-form-field>
+          <mat-form-field class = 'field'>
+            <mat-label>Mot de passe</mat-label>
+            <input matInput type = 'password' formControlName="password" autocomplete="current-password">
+            @if ((password.errors || {})['required']) {
+              <mat-error>Vous devez fournir un mot de passe</mat-error>
+            }
+          </mat-form-field>
 
-      </div>
+        </div>
 
-    </mat-card-content>
-    <mat-card-actions>
-      <button type = 'submit' mat-button>Se connecter</button>
-    </mat-card-actions>
-  </mat-card>
-</div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button type = 'submit' mat-button>Se connecter</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
 
 </form>

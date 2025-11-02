@@ -101,10 +101,24 @@ describe('GoogleMapComponent', () => {
 
   });
 
+  it('should not show the action buttons if map is not rendered', () => {
+    
+    expect(componentFixture.hasActionButton()).toBeFalse();
+
+    component.rendered.set(true);
+    fixture.detectChanges();
+
+    expect(componentFixture.hasActionButton()).toBeTrue();
+  });
+
 
   it('should toggle the fullscreen mode on and off', () => {
+    // Make sure the button is present online
+    component.rendered.set(true);
+    fixture.detectChanges();
+    
     expect(component.isFullScreen).toBeFalse();
-
+    
     componentFixture.clickFullScreenButton();
     fixture.detectChanges();
 

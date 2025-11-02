@@ -1,4 +1,4 @@
-<ng-container *ngIf="(ride$ | async) as ride">
+@if ((ride$ | async); as ride) {
   <div role="presentation" class='top'>
     <div>
       <h1>{{ride.name}}</h1>
@@ -9,7 +9,6 @@
       <button mat-button (click)="export(ride.id)" id="export-button">Exporter en GPX</button>
     </div>
   </div>
-
   <div class='statistics-container'>
     <app-statistic-tile id = 'stat-distance' label="Distance" unit="km" [value]="Math.round(ride.distance / 1000)"></app-statistic-tile>
     <app-statistic-tile id = 'stat-driving-duration' label="Durée de route" unit="" [value]="(drivingDuration$ | async) | date: 'HH:mm':'UTC'"></app-statistic-tile>
@@ -18,30 +17,28 @@
     <app-statistic-tile id = 'stat-max-speed' label="Vitesse maxi" unit="km/h" [value]="(maxSpeed$ | async)"></app-statistic-tile>
     <app-statistic-tile id = 'stat-max-tilt' label="Angle maxi" unit="degrés" [value]="(maxTilt$ | async)"></app-statistic-tile>
   </div>
-
   <app-ride-map-google [ride]="ride" [showLabels]="(showMapLabels$ | async) || false" (showLabelsUpdated)="showLabelsUpdated($event)"></app-ride-map-google>
   <!-- <app-ride-map-osm [ride]="ride"></app-ride-map-osm> -->
-  
   <div class='speed-zones'>
-    <ng-container *ngFor="let zone of (speedZones$|async)">
+    @for (zone of (speedZones$|async); track zone) {
       <div [style.background-color]="getSpeedZoneColor(zone.zone)" class = 'zone'>
         <div>{{(zone.distance / ride.distance * 100).toFixed(1)}} %</div>
         <div class = 'explanation'>{{getSpeedZoneDescription(zone.zone)}}</div>
       </div>
-    </ng-container>
+    }
   </div>
-
   <div class='chart-controls'>
-    <mat-checkbox [formControl]="interpolateCheckbox" aria-label="Interpolation" *ngIf="ride.logs!.length > 1000">
-      Active l'interpolation
-      <div class='explanation' role="presentation">
-        Lorsque l'interpolation est activée et que le trajet comporte plus de 1000 points GPS, le système va
-        n'afficher qu'environ 1000 points, en y attribuant une moyenne des valeurs des points intermédiaires.<br />
-        Il en resultera un lissage des courbes mais une perte de précision sur les valeurs de crête.
-      </div>
-    </mat-checkbox>
+    @if (ride.logs!.length > 1000) {
+      <mat-checkbox [formControl]="interpolateCheckbox" aria-label="Interpolation">
+        Active l'interpolation
+        <div class='explanation' role="presentation">
+          Lorsque l'interpolation est activée et que le trajet comporte plus de 1000 points GPS, le système va
+          n'afficher qu'environ 1000 points, en y attribuant une moyenne des valeurs des points intermédiaires.<br />
+          Il en resultera un lissage des courbes mais une perte de précision sur les valeurs de crête.
+        </div>
+      </mat-checkbox>
+    }
   </div>
-
   <canvas #speedChart></canvas>
   <canvas #tiltChart></canvas>
-</ng-container>
+}

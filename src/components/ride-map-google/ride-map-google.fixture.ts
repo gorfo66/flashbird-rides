@@ -16,6 +16,11 @@ export class RideMapGoogleComponentFixture {
     this.elt.query(By.css('mat-checkbox input')).nativeElement.click();
   }
 
+
+  public hasActionButton() {
+    return !!this.elt.query(By.css('.actions'));
+  }
+
   public clickFullScreenButton() {
     this.elt.query(By.css('.full-screen-button')).nativeElement.click();
   }
