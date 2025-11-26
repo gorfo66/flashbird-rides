@@ -85,18 +85,18 @@ describe('GoogleMapComponent', () => {
   it('should toggle the map mode on click', () => {
     const map = fullComponent.map3d;
 
-    expect(fullComponent.mode).toEqual('SATELLITE');
+    expect(fullComponent.mode()).toEqual('SATELLITE');
 
     componentFixture.clickShowLabelCheckbox();
     fixture.detectChanges();
 
-    expect(fullComponent.mode).toEqual('HYBRID');
+    expect(fullComponent.mode()).toEqual('HYBRID');
     expect(map.mode).toEqual('HYBRID');
 
     componentFixture.clickShowLabelCheckbox();
     fixture.detectChanges();
 
-    expect(fullComponent.mode).toEqual('SATELLITE');
+    expect(fullComponent.mode()).toEqual('SATELLITE');
     expect(map.mode).toEqual('SATELLITE');
 
   });
@@ -117,18 +117,18 @@ describe('GoogleMapComponent', () => {
     component.rendered.set(true);
     fixture.detectChanges();
     
-    expect(component.isFullScreen).toBeFalse();
+    expect(component.isFullScreen()).toBeFalse();
     
     componentFixture.clickFullScreenButton();
     fixture.detectChanges();
 
-    expect(component.isFullScreen).toBeTrue();
+    expect(component.isFullScreen()).toBeTrue();
     expect(componentFixture.getMapContainer().classes['full-screen']).toBeTrue();
 
     componentFixture.clickFullScreenExitButton();
     fixture.detectChanges();
 
-    expect(component.isFullScreen).toBeFalse();
+    expect(component.isFullScreen()).toBeFalse();
     expect(componentFixture.getMapContainer().classes['full-screen']).toBeFalsy();
   });
 });

@@ -1,16 +1,16 @@
 <mat-checkbox [formControl]="showLabelsCheckbox" aria-label="Labels">
   Affiche les différents labels
 </mat-checkbox>
-<div class = 'map-container' id = "map" [class.full-screen]="isFullScreen">
+<div class = 'map-container' id = "map" [class.full-screen]="isFullScreen()">
   <div #map class = 'map'></div>
   @if (rendered()) {
     <div class = 'actions'>
-      @if (!isFullScreen) {
+      @if (!isFullScreen()) {
         <button matMiniFab (click)="toggleFullScreen(true)" class = 'full-screen-button'>
           <mat-icon>fullscreen</mat-icon>
         </button>
       }
-      @if (isFullScreen) {
+      @else {
         <button matMiniFab (click)="toggleFullScreen(false)" class = 'full-screen-exit-button'>
           <mat-icon>fullscreen_exit</mat-icon>
         </button>
