@@ -18,7 +18,6 @@
     <app-statistic-tile id = 'stat-max-tilt' label="Angle maxi" unit="degrés" [value]="(maxTilt$ | async)"></app-statistic-tile>
   </div>
   <app-ride-map-google [ride]="ride" [showLabels]="(showMapLabels$ | async) || false" (showLabelsUpdated)="showLabelsUpdated($event)"></app-ride-map-google>
-  <!-- <app-ride-map-osm [ride]="ride"></app-ride-map-osm> -->
   <div class='speed-zones'>
     @for (zone of (speedZones$|async); track zone) {
       <div [style.background-color]="getSpeedZoneColor(zone.zone)" class = 'zone'>

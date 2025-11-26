@@ -17,6 +17,7 @@ import {
   MatButtonModule
 } from "@angular/material/button"
 import {
+  FormsModule,
   ReactiveFormsModule
 } from "@angular/forms"
 import {
@@ -27,7 +28,6 @@ import {
 } from '@angular/material/input'
 import {
   RideMapGoogleModule,
-  RideMapOsmModule,
   StatisticTileModule
 } from "../../components"
 import {
@@ -43,8 +43,8 @@ import {
     MatButtonModule,
     MatCheckboxModule,
     MatInputModule,
+    FormsModule,
     ReactiveFormsModule,
-    RideMapOsmModule,
     RideMapGoogleModule,
     StatisticTileModule
   ],
