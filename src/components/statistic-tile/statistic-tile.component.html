@@ -1,5 +1,7 @@
-<div class='label'>{{label}}</div>
+<div class='label'>{{label()}}</div>
 <div class='value'>
-  <div class='amount'>{{value}}</div>
-  <div class='unit'>{{unit}}</div>
+  <div class='amount'>{{value()}}</div>
+  @if (unit()) {
+    <div class='unit'>{{unit()}}</div>
+  }
 </div>

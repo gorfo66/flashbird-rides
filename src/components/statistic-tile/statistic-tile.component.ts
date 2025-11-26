@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input
+  input,
 } from '@angular/core'
 
 @Component({
@@ -13,7 +13,7 @@ import {
 })
 export class StatisticTileComponent {
 
-  @Input() label?: string;
-  @Input() value?: number | string | undefined | null;
-  @Input() unit?: string | undefined;
+  label = input<string>();
+  value = input<number | string | undefined | null>();
+  unit = input<string | undefined>();
 }
