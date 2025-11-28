@@ -1,7 +1,7 @@
 import {
   Component,
   EventEmitter,
-  Input,
+  input,
   Output
 } from '@angular/core'
 import {
@@ -14,7 +14,7 @@ import {
   template: ''
 })
 export class MockRideMapGoogleComponent {
-  @Input() ride?: Ride;
-  @Input() showLabels = false;
+  public ride = input.required<Ride>();
+  public showLabels = input<boolean>();
   @Output() showLabelsUpdated = new EventEmitter<boolean>()
 }

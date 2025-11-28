@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject
-} from '@angular/core'
+} from '@angular/core';
 import {
   CommonModule
 } from '@angular/common'

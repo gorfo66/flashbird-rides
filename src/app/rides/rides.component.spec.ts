@@ -1,9 +1,10 @@
 import {
   ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick
+  TestBed
 } from '@angular/core/testing'
+import {
+  provideZonelessChangeDetection
+} from '@angular/core'
 import {
   FilterType,
   RidesComponent
@@ -85,6 +86,7 @@ describe('RidesComponent', () => {
         }])
       ],
       providers: [
+        provideZonelessChangeDetection(),
         provideMockStore(),
         {
           provide: RideService,
@@ -109,7 +111,7 @@ describe('RidesComponent', () => {
     // Mock the router
     router = TestBed.inject(Router);
 
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it('should create', () => {
@@ -122,27 +124,27 @@ describe('RidesComponent', () => {
     expect(component.filterForm.controls['filter'].value).toEqual(FilterType.all);
   });
 
-  it('should filter the cards', () => {
+  it('should filter the cards', async () => {
     storeUiStageOverride.setResult({
       filter: FilterType.long
     });
 
     store.refreshState();
-    fixture.detectChanges();
+    await fixture.whenStable();
 
     const cards = componentFixture.getRideCards();
     expect(cards.length).toEqual(1);
     expect(component.filterForm.controls['filter'].value).toEqual(FilterType.long);
   });
 
-  it('should update the ui state store when toggle the filter', fakeAsync(() => {
+  it('should update the ui state store when toggle the filter', async () => {
     const spy = spyOn(store, 'dispatch').and.callThrough();
     componentFixture.clickFilterLong();
-    tick();
 
+    await fixture.whenStable();
     expect(spy).toHaveBeenCalledWith({ uiState: { filter: 'long' },
       type: '[Ui] upsert state' });
-  }));
+  });
 
 
   it('should redirect to the ride page on click', () => {

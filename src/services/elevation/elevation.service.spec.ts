@@ -2,6 +2,9 @@ import {
   TestBed
 } from '@angular/core/testing'
 import {
+  provideZonelessChangeDetection
+} from '@angular/core'
+import {
   provideHttpClient
 } from '@angular/common/http'
 import {
@@ -19,6 +22,7 @@ describe('ElevationService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        provideZonelessChangeDetection(),
         provideHttpClient(),
         provideHttpClientTesting()
       ]
