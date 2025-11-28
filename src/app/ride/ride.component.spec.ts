@@ -113,6 +113,7 @@ describe('RideComponent', () => {
     // Mock the store
     store = TestBed.inject(MockStore);
     mockSelectRideOverride = store.overrideSelector(selectRide, MOCK_RIDE);
+    store.refreshState();
   
     // Mock the router
     router = TestBed.inject(Router);

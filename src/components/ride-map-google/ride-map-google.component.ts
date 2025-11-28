@@ -67,7 +67,6 @@ export class RideMapGoogleComponent implements OnInit, AfterViewInit {
   constructor() {
 
     effect(() => {
-      console.log('effect mode');
       const mode = this.mode();
       if (this.map3d) {
         this.renderer.setAttribute(this.map3d, 'mode', mode)
@@ -75,7 +74,6 @@ export class RideMapGoogleComponent implements OnInit, AfterViewInit {
     })
 
     effect(() => {
-      console.log('effect checkbox');
       this.showLabelsUpdated.emit(this.checkboxValue());
     })
     

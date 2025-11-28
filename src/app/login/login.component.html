@@ -5,8 +5,8 @@
       <mat-card-content>
         <div class = 'card-content'>
 
-          @if ((errorMessage$ | async); as message) {
-            <div class = 'server-error'>{{message}}</div>
+          @if (errorMessage()) {
+            <div class = 'server-error'>{{errorMessage()}}</div>
           }
 
           <mat-form-field class = 'field'>

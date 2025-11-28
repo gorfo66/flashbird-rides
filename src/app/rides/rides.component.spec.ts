@@ -105,6 +105,7 @@ describe('RidesComponent', () => {
     store = TestBed.inject(MockStore);
     store.overrideSelector(selectRides, MOCK_RIDES);
     storeUiStageOverride = store.overrideSelector(selectUiState, {});
+    store.refreshState();
 
     // Mock the router
     router = TestBed.inject(Router);
@@ -128,7 +129,6 @@ describe('RidesComponent', () => {
     });
 
     store.refreshState();
-    component.ngOnInit();
     fixture.detectChanges();
 
     const cards = componentFixture.getRideCards();

@@ -1,7 +1,7 @@
 <div class='statistics-container'>
-  <app-statistic-tile label="Distance totale" unit="km" [value]="totalDistance$ | async"></app-statistic-tile>
+  <app-statistic-tile label="Distance totale" unit="km" [value]="totalDistance()"></app-statistic-tile>
   <app-statistic-tile label="Distance moyenne par mois" unit="km"
-    [value]="distancePerMonth$ | async"></app-statistic-tile>
+    [value]="distancePerMonth()"></app-statistic-tile>
 </div>
 
 <div class='filter-container'>
@@ -14,19 +14,19 @@
   </form>
 </div>
 
-@if ((filteredRides$ | async); as rides) {
+@if (filteredRides()) {
   <div class='timeline'>
     <div class='rides'>
-      @for (ride of rides; track ride; let i = $index) {
+      @for (ride of filteredRides(); track ride; let i = $index) {
       <div class='ride'>
         <div class='timeline-date'>
-          @if (i === 0 || (ride.startDate | date: 'ddMMM') !== (rides[i-1].startDate | date: 'ddMMM')) {
+          @if (i === 0 || (ride.startDate | date: 'ddMMM') !== (filteredRides()[i-1].startDate | date: 'ddMMM')) {
           <span class='day'>{{ride.startDate | date: 'dd'}}</span>
           <span class='month'>{{ride.startDate | date: 'MMMM'}}</span>
           }
         </div>
         <div class='timeline-line'
-          [ngClass]="{'with-date' : i === 0 || (ride.startDate | date: 'ddMMM') !== (rides[i-1].startDate | date: 'ddMMM')}">
+          [ngClass]="{'with-date' : i === 0 || (ride.startDate | date: 'ddMMM') !== (filteredRides()[i-1].startDate | date: 'ddMMM')}">
         </div>
         <mat-card class='card ride-card'>
           <mat-card-content class='card-content'>

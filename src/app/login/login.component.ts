@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
+  signal,
   inject
 } from '@angular/core'
 import {
@@ -13,8 +13,6 @@ import {
   AuthenticationService
 } from '../../services'
 import {
-  BehaviorSubject,
-  Subscription,
   take
 } from 'rxjs'
 import {
@@ -34,14 +32,12 @@ import {
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginComponent implements OnDestroy {
+export class LoginComponent {
   private authService = inject(AuthenticationService);
   private store = inject(Store);
   private router = inject(Router);
 
-  private subscriptions: Subscription[] = [];
-  private errorMessageSubject = new BehaviorSubject<string>('');
-  public errorMessage$ = this.errorMessageSubject.asObservable();
+  public errorMessage = signal<string>('');
 
   public readonly form: FormGroup;
 
@@ -52,24 +48,18 @@ export class LoginComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(value => value.unsubscribe());
-  }
-
   public onSubmit() {
     if (this.form.valid) {
       const login = this.form.value.login;
       const password = this.form.value.password;
-      this.subscriptions.push(
-        this.authService.getToken(login, password).pipe(take(1)).subscribe((reply) => {
-          if (reply.error) {
-            this.errorMessageSubject.next(reply.error);
-            return;
-          }
-          this.store.dispatch(upsertAuthToken({ token: reply.token! }));
-          this.router.navigate(['rides']);
-        })
-      )
+      this.authService.getToken(login, password).pipe(take(1)).subscribe((reply) => {
+        if (reply.error) {
+          this.errorMessage.set(reply.error);
+          return;
+        }
+        this.store.dispatch(upsertAuthToken({ token: reply.token! }));
+        this.router.navigate(['rides']);
+      })
     }
     return false;
   }
