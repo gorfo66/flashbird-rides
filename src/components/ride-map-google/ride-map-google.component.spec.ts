@@ -40,8 +40,8 @@ describe('GoogleMapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RideMapGoogleComponent],
       imports: [
+        RideMapGoogleComponent,
         MatCheckboxModule,
         MatIconModule,
         MatButtonModule,

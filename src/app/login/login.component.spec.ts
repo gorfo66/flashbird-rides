@@ -58,8 +58,8 @@ describe('LoginComponent', () => {
     authenticationService = new AuthenticationServiceFixture();
 
     await TestBed.configureTestingModule({
-      declarations: [LoginComponent],
       imports: [
+        LoginComponent,
         MatButtonModule,
         MatCardModule,
         MatInputModule,

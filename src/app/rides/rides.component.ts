@@ -2,8 +2,12 @@ import {
   Component,
   computed,
   effect,
-  inject
+  inject,
+  ChangeDetectionStrategy
 } from '@angular/core'
+import {
+  CommonModule
+} from '@angular/common'
 import {
   Store
 } from '@ngrx/store'
@@ -23,8 +27,24 @@ import {
 } from '../../models'
 import {
   FormBuilder,
-  FormGroup
+  FormGroup,
+  ReactiveFormsModule
 } from '@angular/forms'
+import {
+  RouterModule
+} from '@angular/router'
+import {
+  MatButtonModule
+} from '@angular/material/button'
+import {
+  MatButtonToggleModule
+} from '@angular/material/button-toggle'
+import {
+  MatCardModule
+} from '@angular/material/card'
+import {
+  StatisticTileComponent
+} from "../../components"
 
 export enum FilterType {
   all = 'all', 
@@ -34,10 +54,11 @@ export enum FilterType {
 
 @Component({
   selector: 'app-rides',
-  standalone: false,
-  
+  standalone: true,
+  imports: [CommonModule, RouterModule, MatButtonModule, MatCardModule, MatButtonToggleModule, ReactiveFormsModule, StatisticTileComponent],
   templateUrl: './rides.component.html',
-  styleUrl: './rides.component.scss'
+  styleUrl: './rides.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RidesComponent {
   private store = inject(Store);

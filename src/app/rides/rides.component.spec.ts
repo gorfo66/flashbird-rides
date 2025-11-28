@@ -74,8 +74,7 @@ describe('RidesComponent', () => {
   
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RidesComponent, MockStatisticTileComponent],
-      imports: [
+      imports: [RidesComponent, MockStatisticTileComponent,
         MatButtonModule,
         MatCardModule,
         MatButtonToggleModule,

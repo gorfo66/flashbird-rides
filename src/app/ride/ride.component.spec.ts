@@ -77,13 +77,10 @@ describe('RideComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        RideComponent, 
+      imports: [
+        RideComponent,
         MockStatisticTileComponent,
         MockRideMapGoogleComponent,
-        MockRideMapGoogleComponent
-      ],
-      imports: [
         MatSnackBarModule,
         MatButtonModule,
         MatCheckboxModule,

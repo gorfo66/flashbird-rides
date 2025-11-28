@@ -5,9 +5,13 @@ import {
   inject
 } from '@angular/core'
 import {
+  CommonModule
+} from '@angular/common'
+import {
   FormControl,
   FormGroup,
-  Validators
+  Validators,
+  ReactiveFormsModule
 } from '@angular/forms'
 import {
   AuthenticationService
@@ -24,10 +28,20 @@ import {
 import {
   Router
 } from '@angular/router'
+import {
+  MatButtonModule
+} from "@angular/material/button"
+import {
+  MatCardModule
+} from "@angular/material/card"
+import {
+  MatInputModule
+} from "@angular/material/input"
 
 @Component({
   selector: 'app-login-',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, MatButtonModule, MatCardModule, MatInputModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

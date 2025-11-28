@@ -15,6 +15,10 @@ import {
   signal
 } from '@angular/core'
 import {
+  CommonModule,
+  ViewportScroller
+} from '@angular/common'
+import {
   Log,
   Ride
 } from '../../models'
@@ -26,15 +30,23 @@ import {
   getSpeedZoneInfo
 } from '../../helpers'
 import {
-  FormControl
+  FormControl,
+  ReactiveFormsModule
 } from '@angular/forms'
 import {
-  ViewportScroller
-} from '@angular/common';
+  MatCheckboxModule
+} from "@angular/material/checkbox"
+import {
+  MatIconModule
+} from '@angular/material/icon'
+import {
+  MatButtonModule
+} from '@angular/material/button'
 
 @Component({
   selector: 'app-ride-map-google',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, MatCheckboxModule, MatIconModule, MatButtonModule, ReactiveFormsModule],
   templateUrl: './ride-map-google.component.html',
   styleUrl: './ride-map-google.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

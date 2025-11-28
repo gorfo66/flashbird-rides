@@ -3,10 +3,14 @@ import {
   Component,
   input,
 } from '@angular/core'
+import {
+  CommonModule
+} from '@angular/common'
 
 @Component({
   selector: 'app-statistic-tile',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './statistic-tile.component.html',
   styleUrl: './statistic-tile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

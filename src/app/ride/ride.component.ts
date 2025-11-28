@@ -6,8 +6,12 @@ import {
   effect,
   inject,
   signal,
-  viewChild
+  viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core'
+import {
+  CommonModule
+} from '@angular/common'
 import {
   take,
   distinctUntilChanged,
@@ -42,27 +46,45 @@ import {
   RideService
 } from '../../services'
 import {
-  MatSnackBar
+  MatSnackBar,
+  MatSnackBarModule
 } from '@angular/material/snack-bar'
 import {
-  Router
+  Router,
+  RouterModule
 } from '@angular/router'
 import {
-  FormControl
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule
 } from '@angular/forms'
 import {
   Chart
 } from 'chart.js'
 import {
   ViewportScroller
-} from '@angular/common';
+} from '@angular/common'
+import {
+  MatButtonModule
+} from "@angular/material/button"
+import {
+  MatCheckboxModule
+} from '@angular/material/checkbox'
+import {
+  MatInputModule
+} from '@angular/material/input'
+import {
+  RideMapGoogleComponent,
+  StatisticTileComponent
+} from "../../components"
 
 @Component({
   selector: 'app-ride',
-  standalone: false,
-
+  standalone: true,
+  imports: [CommonModule, RouterModule, MatSnackBarModule, MatButtonModule, MatCheckboxModule, MatInputModule, FormsModule, ReactiveFormsModule, RideMapGoogleComponent, StatisticTileComponent],
   templateUrl: './ride.component.html',
-  styleUrl: './ride.component.scss'
+  styleUrl: './ride.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RideComponent {
   private store = inject(Store);

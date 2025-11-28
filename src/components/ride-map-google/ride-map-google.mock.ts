@@ -10,7 +10,7 @@ import {
 
 @Component({
   selector: 'app-ride-map-google',
-  standalone: false,
+  standalone: true,
   template: ''
 })
 export class MockRideMapGoogleComponent {

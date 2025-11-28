@@ -49,6 +49,8 @@ export class RideComponentFixture {
   }
 
   private getStatisticValue(selector: string) {
-    return this.elt.query(By.css(selector)).componentInstance.value;
+    const value = this.elt.query(By.css(selector)).componentInstance.value;
+    // Handle both regular values and signal functions
+    return typeof value === 'function' ? value() : value;
   }
 }

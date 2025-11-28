@@ -17,7 +17,7 @@ describe('StatisticTileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [StatisticTileComponent]
+      imports: [StatisticTileComponent]
     })
       .compileComponents();
 

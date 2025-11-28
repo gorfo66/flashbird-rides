@@ -1,8 +1,4 @@
 import {
-  NgModule
-} from '@angular/core'
-import {
-  RouterModule,
   Routes
 } from '@angular/router'
 import {
@@ -17,7 +13,7 @@ import {
   LoginComponent
 } from './login'
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent
@@ -36,9 +32,3 @@ const routes: Routes = [
     redirectTo: '/rides',
     pathMatch: 'full' },
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
