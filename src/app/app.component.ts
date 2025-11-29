@@ -2,7 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject
-} from '@angular/core'
+} from '@angular/core';
+import {
+  CommonModule
+} from '@angular/common'
+import {
+  RouterModule
+} from '@angular/router'
 import {
   Store
 } from '@ngrx/store'
@@ -17,7 +23,8 @@ import {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })

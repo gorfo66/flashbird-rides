@@ -2,6 +2,9 @@ import {
   ComponentFixture,
   TestBed
 } from '@angular/core/testing'
+import {
+  provideZonelessChangeDetection
+} from '@angular/core'
 
 import {
   RideMapGoogleComponent
@@ -40,30 +43,37 @@ describe('GoogleMapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RideMapGoogleComponent],
       imports: [
+        RideMapGoogleComponent,
         MatCheckboxModule,
         MatIconModule,
         MatButtonModule,
         ReactiveFormsModule
+      ],
+      providers: [
+        provideZonelessChangeDetection()
       ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(RideMapGoogleComponent);
-    fixture.componentRef.setInput('ride', MOCK_RIDE);
     component = fixture.componentInstance;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fullComponent = (component as any);
-    spyRenderMap = spyOn(fullComponent, 'renderMap').and.callThrough();
-    fullComponent.loadLibraries = () => ({
+    
+    spyOn(fullComponent, 'loadLibraries').and.returnValue(Promise.resolve({
       AltitudeMode,
       Map3DElement,
       Polyline3DElement
-    });
+    }));
+    
+    spyRenderMap = spyOn(fullComponent, 'renderMap').and.callThrough();
+    spyOn(fullComponent.renderer, 'appendChild').and.returnValue(undefined);
+    
+    fixture.componentRef.setInput('ride', MOCK_RIDE);
     componentFixture = new RideMapGoogleComponentFixture(fixture.debugElement);
 
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it('should create', () => {
@@ -85,50 +95,50 @@ describe('GoogleMapComponent', () => {
   it('should toggle the map mode on click', () => {
     const map = fullComponent.map3d;
 
-    expect(fullComponent.mode).toEqual('SATELLITE');
+    expect(fullComponent.mode()).toEqual('SATELLITE');
 
     componentFixture.clickShowLabelCheckbox();
     fixture.detectChanges();
 
-    expect(fullComponent.mode).toEqual('HYBRID');
+    expect(fullComponent.mode()).toEqual('HYBRID');
     expect(map.mode).toEqual('HYBRID');
 
     componentFixture.clickShowLabelCheckbox();
     fixture.detectChanges();
 
-    expect(fullComponent.mode).toEqual('SATELLITE');
+    expect(fullComponent.mode()).toEqual('SATELLITE');
     expect(map.mode).toEqual('SATELLITE');
 
   });
 
-  it('should not show the action buttons if map is not rendered', () => {
+  it('should not show the action buttons if map is not rendered', async () => {
     
     expect(componentFixture.hasActionButton()).toBeFalse();
 
     component.rendered.set(true);
-    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(componentFixture.hasActionButton()).toBeTrue();
   });
 
 
-  it('should toggle the fullscreen mode on and off', () => {
+  it('should toggle the fullscreen mode on and off', async () => {
     // Make sure the button is present online
     component.rendered.set(true);
-    fixture.detectChanges();
+    await fixture.whenStable();
     
-    expect(component.isFullScreen).toBeFalse();
+    expect(component.isFullScreen()).toBeFalse();
     
     componentFixture.clickFullScreenButton();
-    fixture.detectChanges();
+    await fixture.whenStable();
 
-    expect(component.isFullScreen).toBeTrue();
+    expect(component.isFullScreen()).toBeTrue();
     expect(componentFixture.getMapContainer().classes['full-screen']).toBeTrue();
 
     componentFixture.clickFullScreenExitButton();
-    fixture.detectChanges();
+    await fixture.whenStable();
 
-    expect(component.isFullScreen).toBeFalse();
+    expect(component.isFullScreen()).toBeFalse();
     expect(componentFixture.getMapContainer().classes['full-screen']).toBeFalsy();
   });
 });

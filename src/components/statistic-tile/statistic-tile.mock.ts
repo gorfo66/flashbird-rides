@@ -5,7 +5,7 @@ import {
 
 @Component({
   selector: 'app-statistic-tile',
-  standalone: false,
+  standalone: true,
   template: ''
 })
 export class MockStatisticTileComponent {

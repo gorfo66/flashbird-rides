@@ -4,105 +4,99 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
+  OnInit,
   Output,
   Renderer2,
-  SimpleChanges,
   ViewChild,
+  computed,
+  effect,
   inject,
+  input,
   signal
 } from '@angular/core'
+import {
+  CommonModule,
+  ViewportScroller
+} from '@angular/common'
 import {
   Log,
   Ride
 } from '../../models'
 import {
-  BehaviorSubject,
-  Subscription,
-  distinctUntilChanged,
-  filter
-} from 'rxjs'
+  toSignal
+} from '@angular/core/rxjs-interop'
 import {
   getSpeedZone,
   getSpeedZoneInfo
 } from '../../helpers'
 import {
-  FormControl
+  FormControl,
+  ReactiveFormsModule
 } from '@angular/forms'
 import {
-  ViewportScroller
-} from '@angular/common';
+  MatCheckboxModule
+} from "@angular/material/checkbox"
+import {
+  MatIconModule
+} from '@angular/material/icon'
+import {
+  MatButtonModule
+} from '@angular/material/button'
 
 @Component({
   selector: 'app-ride-map-google',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, MatCheckboxModule, MatIconModule, MatButtonModule, ReactiveFormsModule],
   templateUrl: './ride-map-google.component.html',
   styleUrl: './ride-map-google.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewInit {
+export class RideMapGoogleComponent implements OnInit, AfterViewInit {
   private renderer = inject(Renderer2);
 
   private viewportScroller = inject(ViewportScroller);
 
-  @Input() ride?: Ride;
-  private rideSubject = new BehaviorSubject<Ride | undefined>(undefined);
-
-  @Input() showLabels = false;
+  public ride = input.required<Ride>();
+  public showLabels = input<boolean>();
 
   @Output() showLabelsUpdated = new EventEmitter<boolean>()
 
-  private subscriptions: Subscription[] = [];
-
   @ViewChild('map')
   private map: ElementRef | undefined;
-
-
-  public showLabelsCheckbox = new FormControl();
-  private mode = 'SATELLITE';
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private map3d?: any;
 
 
-  public isFullScreen = false;
+  public showLabelsCheckbox = new FormControl();
+  private checkboxValue = toSignal(this.showLabelsCheckbox.valueChanges)
+  private mode = computed(() => this.checkboxValue() ? 'HYBRID' : 'SATELLITE');
+
+
+  public isFullScreen = signal(false);
   public rendered = signal(false);
 
 
   constructor() {
-    this.subscriptions.push(
-      this.showLabelsCheckbox.valueChanges.subscribe((change) => {
-        this.showLabelsUpdated.emit(change);
-        this.mode = change ? 'HYBRID' : 'SATELLITE';
-        this.updateModeValue();
-      })
-    );
+
+    effect(() => {
+      const mode = this.mode();
+      if (this.map3d) {
+        this.renderer.setAttribute(this.map3d, 'mode', mode)
+      }
+    })
+
+    effect(() => {
+      this.showLabelsUpdated.emit(this.checkboxValue());
+    })
+    
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-
-    if (changes['ride']) {
-      this.rideSubject.next(this.ride);
-    }
-
-    if (changes['showLabels']) {
-      this.showLabelsCheckbox.setValue(this.showLabels);
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(value => value.unsubscribe());
+  ngOnInit(): void {
+    this.showLabelsCheckbox.setValue(this.showLabels());
   }
 
   ngAfterViewInit(): void {
-    this.subscriptions.push(
-      this.rideSubject.pipe(
-        filter(ride => !!ride && !!ride.logs),
-        distinctUntilChanged()
-      ).subscribe((ride) => this.renderMap(ride))
-    );
+    this.renderMap(this.ride());
   }
 
   private getCenter(logs: Log[]): google.maps.LatLngAltitudeLiteral {
@@ -120,13 +114,6 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
     };
   }
 
-  private updateModeValue() {
-    if (this.map3d) {
-      this.renderer.setAttribute(this.map3d, 'mode', this.mode)
-    }
-  }
-
-
   private async loadLibraries(): Promise<google.maps.Maps3DLibrary> {
     return await google.maps.importLibrary("maps3d") as google.maps.Maps3DLibrary;
   }
@@ -143,7 +130,7 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
       this.map3d.tilt = 60;
       this.map3d.heading = 0;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.map3d as any).mode = this.mode;
+      (this.map3d as any).mode = this.mode();
 
       logs.forEach((log, index) => {
         const next = logs[index + 1];
@@ -179,7 +166,7 @@ export class RideMapGoogleComponent implements OnChanges, OnDestroy, AfterViewIn
   }
 
   public toggleFullScreen(fullScreen: boolean) {
-    this.isFullScreen = fullScreen;
+    this.isFullScreen.set(fullScreen);
     this.viewportScroller.scrollToPosition([0, 0]);
     if (fullScreen) {
       document.body.style.overflow = 'hidden';

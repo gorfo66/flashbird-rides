@@ -2,7 +2,9 @@ import {
   ComponentFixture,
   TestBed
 } from '@angular/core/testing'
-
+import {
+  provideZonelessChangeDetection
+} from '@angular/core'
 import {
   RideComponent
 } from './ride.component'
@@ -63,6 +65,10 @@ import {
 import {
   Ride
 } from '../../models'
+import {
+  RideMapGoogleComponent,
+  StatisticTileComponent
+} from '../../components';
 registerLocaleData(localeFr, 'fr-FR');
 
 describe('RideComponent', () => {
@@ -76,14 +82,10 @@ describe('RideComponent', () => {
   const rideServiceFixture = new RideServiceFixture()
 
   beforeEach(async () => {
+   
     await TestBed.configureTestingModule({
-      declarations: [
-        RideComponent, 
-        MockStatisticTileComponent,
-        MockRideMapGoogleComponent,
-        MockRideMapGoogleComponent
-      ],
       imports: [
+        RideComponent,
         MatSnackBarModule,
         MatButtonModule,
         MatCheckboxModule,
@@ -95,6 +97,7 @@ describe('RideComponent', () => {
         }])
       ],
       providers: [
+        provideZonelessChangeDetection(),
         provideMockStore(),
         {
           provide: RideService,
@@ -104,6 +107,10 @@ describe('RideComponent', () => {
           useValue: 'fr-FR' }
       ]
     })
+      .overrideComponent(RideComponent, {
+        remove: { imports: [RideMapGoogleComponent, StatisticTileComponent] },
+        add: { imports: [MockRideMapGoogleComponent, MockStatisticTileComponent] },
+      })
       .compileComponents();
 
     fixture = TestBed.createComponent(RideComponent);
@@ -113,11 +120,12 @@ describe('RideComponent', () => {
     // Mock the store
     store = TestBed.inject(MockStore);
     mockSelectRideOverride = store.overrideSelector(selectRide, MOCK_RIDE);
+    store.refreshState();
   
     // Mock the router
     router = TestBed.inject(Router);
 
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it('should create', () => {
@@ -139,7 +147,7 @@ describe('RideComponent', () => {
     expect(componentFixture.getStatisticMaxTiltValue()).toEqual(18);
   });
 
-  it('should show the inerpolation checkbox if less than 1000 log entries', () => {
+  it('should show the inerpolation checkbox if less than 1000 log entries', async () => {
     // Force the logs to have more than 1000 items
     mockSelectRideOverride.setResult({
       ...MOCK_RIDE,
@@ -147,12 +155,12 @@ describe('RideComponent', () => {
     });
 
     store.refreshState();
-    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(componentFixture.getInterpolationCheckbox()).toBeFalsy();
   });
 
-  it('should show the inerpolation checkbox if more than 1000 log entries', () => {
+  it('should show the inerpolation checkbox if more than 1000 log entries', async () => {
     // Force the logs to have more than 1000 items
     mockSelectRideOverride.setResult({
       ...MOCK_RIDE,
@@ -160,7 +168,7 @@ describe('RideComponent', () => {
     });
     
     store.refreshState();
-    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(componentFixture.getInterpolationCheckbox()).toBeTruthy();
   });

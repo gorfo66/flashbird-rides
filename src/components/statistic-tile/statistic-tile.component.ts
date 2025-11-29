@@ -1,19 +1,23 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input
+  input,
 } from '@angular/core'
+import {
+  CommonModule
+} from '@angular/common'
 
 @Component({
   selector: 'app-statistic-tile',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './statistic-tile.component.html',
   styleUrl: './statistic-tile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatisticTileComponent {
 
-  @Input() label?: string;
-  @Input() value?: number | string | undefined | null;
-  @Input() unit?: string | undefined;
+  label = input<string>();
+  value = input<number | string | undefined | null>();
+  unit = input<string | undefined>();
 }

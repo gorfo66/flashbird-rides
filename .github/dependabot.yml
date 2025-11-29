@@ -24,7 +24,6 @@ updates:
           - "chart.js"
           - "leaflet"
           - "tslib"
-          - "zone.js"
           - "eslint"
           - "jasmine-core"
           - "karma*"

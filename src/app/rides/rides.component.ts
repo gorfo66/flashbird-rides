@@ -1,9 +1,13 @@
 import {
   Component,
-  OnDestroy,
-  OnInit,
-  inject
+  computed,
+  effect,
+  inject,
+  ChangeDetectionStrategy
 } from '@angular/core'
+import {
+  CommonModule
+} from '@angular/common'
 import {
   Store
 } from '@ngrx/store'
@@ -13,19 +17,34 @@ import {
   upsertUiState
 } from '../../store'
 import {
-  Observable,
-  Subscription,
-  combineLatest,
-  map,
-  take
+  toSignal
+} from '@angular/core/rxjs-interop'
+import {
+  map
 } from 'rxjs'
 import {
   Ride
 } from '../../models'
 import {
   FormBuilder,
-  FormGroup
+  FormGroup,
+  ReactiveFormsModule
 } from '@angular/forms'
+import {
+  RouterModule
+} from '@angular/router'
+import {
+  MatButtonModule
+} from '@angular/material/button'
+import {
+  MatButtonToggleModule
+} from '@angular/material/button-toggle'
+import {
+  MatCardModule
+} from '@angular/material/card'
+import {
+  StatisticTileComponent
+} from "../../components"
 
 export enum FilterType {
   all = 'all', 
@@ -35,77 +54,71 @@ export enum FilterType {
 
 @Component({
   selector: 'app-rides',
-  standalone: false,
-  
+  standalone: true,
+  imports: [CommonModule, RouterModule, MatButtonModule, MatCardModule, MatButtonToggleModule, ReactiveFormsModule, StatisticTileComponent],
   templateUrl: './rides.component.html',
-  styleUrl: './rides.component.scss'
+  styleUrl: './rides.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RidesComponent implements OnDestroy, OnInit {
+export class RidesComponent {
   private store = inject(Store);
 
+  public rides = toSignal(
+    this.store.select(selectRides),
+    { initialValue: [] }
+  );
 
-  private subscriptions: Subscription[] = [];
-  private currentFilter$: Observable<string>;
+  public currentFilter = toSignal(
+    this.store.select(selectUiState).pipe(map((uiState) => uiState?.filter || FilterType.all)),
+    { initialValue: FilterType.all }
+  );
 
-  public rides$: Observable<Ride[]>;
-  public filteredRides$: Observable<Ride[]>;
-  public totalDistance$: Observable<number>;
-  public distancePerMonth$: Observable<number>;
+  public filteredRides = computed(() => {
+    const rides = this.rides();
+    const filterType = this.currentFilter() || FilterType.all;
+    if (!rides || !Array.isArray(rides)) return [];
+    return rides.filter((ride: Ride) => filterType === FilterType.all || ride.distance > 100000);
+  });
+
+  public totalDistance = computed(() => {
+    const rides = this.rides();
+    if (!rides || rides.length === 0) return 0;
+    return Math.floor(rides.reduce((a: number, b: Ride) => a + b.distance, 0) / 1000);
+  });
+
+  public distancePerMonth = computed(() => {
+    const rides = this.rides();
+    const totalDistance = this.totalDistance();
+    if (!rides || rides.length === 0) return 0;
+    const lastDate = rides[0].startDate;
+    const firstDate = rides[rides.length - 1].endDate;
+    const elapsedTime = lastDate.getTime() - firstDate.getTime();
+    const oneMonthAverageDurationInMs = (365.25 / 12) * 24 * 3600 * 1000;
+    const elapsedTimeInMonth = elapsedTime / oneMonthAverageDurationInMs;
+    return Math.floor(totalDistance / elapsedTimeInMonth);
+  });
+
   public readonly filterForm: FormGroup
  
   constructor() {
     const formBuilder = inject(FormBuilder);
 
-    this.rides$ = this.store.select(selectRides);
-    this.currentFilter$ = this.store.select(selectUiState).pipe(map((uiState) => uiState.filter || FilterType.all));
-
-    this.filteredRides$ = combineLatest([
-      this.rides$,
-      this.currentFilter$
-    ]).pipe(
-      map( ([rides, filterType]) => {
-        return rides.filter((ride) => filterType === FilterType.all || ride.distance > 100000);
-      })
-    );
-    this.totalDistance$ = this.rides$.pipe(map((rides) => Math.floor(rides.reduce((a, b) => a + b.distance, 0) / 1000)))
-    this.distancePerMonth$ = combineLatest([
-      this.rides$,
-      this.totalDistance$
-    ]).pipe(
-      map(([rides, totalDistance]) => {
-        const lastDate = rides[0].startDate;
-        const firstDate = rides[rides.length - 1].endDate;
-        const elapsedTime = lastDate.getTime() - firstDate.getTime();
-        const oneMonthAverageDurationInMs = (365.25 / 12) * 24 * 3600 * 1000;
-        const elapsedTimeInMonth = elapsedTime / oneMonthAverageDurationInMs;
-        return Math.floor(totalDistance / elapsedTimeInMonth);
-      })
-    )
-
     this.filterForm = formBuilder.group({
       filter: ''
     });
 
-    this.subscriptions.push(
-      this.filterForm.valueChanges.subscribe((change) => {
-        if (change.filter) {
-          this.store.dispatch(upsertUiState({uiState : { filter: change.filter}}));
-        }
-      })
-    );
-  }
+    // Initialize filter form with current filter value
+    effect(() => {
+      const currentFilter = this.currentFilter();
+      this.filterForm.controls['filter'].setValue(currentFilter, { emitEvent: false });
+    });
 
-  ngOnInit(): void {
-   
-    this.subscriptions.push(
-      this.currentFilter$.pipe(take(1)).subscribe((value) => {
-        this.filterForm.controls['filter'].setValue(value);
-      })
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(value => value.unsubscribe());
+    // Handle filter form changes
+    this.filterForm.valueChanges.subscribe((change) => {
+      if (change.filter) {
+        this.store.dispatch(upsertUiState({uiState : { filter: change.filter}}));
+      }
+    });
   }
 
   public formatDistance(distance: number) {

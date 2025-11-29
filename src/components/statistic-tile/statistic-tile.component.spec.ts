@@ -2,6 +2,9 @@ import {
   ComponentFixture,
   TestBed
 } from '@angular/core/testing'
+import {
+  provideZonelessChangeDetection
+} from '@angular/core'
 
 import {
   StatisticTileComponent
@@ -17,25 +20,29 @@ describe('StatisticTileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [StatisticTileComponent]
+      imports: [StatisticTileComponent],
+      providers: [
+        provideZonelessChangeDetection()
+      ]
     })
       .compileComponents();
 
     fixture = TestBed.createComponent(StatisticTileComponent);
     component = fixture.componentInstance;
     componentFixture = new StatisticTileComponentFixture(fixture.debugElement);
-    fixture.detectChanges();
+
+    await fixture.whenStable();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render all the data', () => {
+  it('should render all the data', async () => {
     fixture.componentRef.setInput('label', 'label');
     fixture.componentRef.setInput('unit', 'unit');
     fixture.componentRef.setInput('value', '123');
-    fixture.detectChanges();
+    await fixture.whenStable();
 
     expect(componentFixture.getLabelText()).toEqual('label');
     expect(componentFixture.getValueText()).toEqual('123');

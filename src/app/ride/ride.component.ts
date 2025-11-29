@@ -1,22 +1,25 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  inject
+  Signal,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import {
-  BehaviorSubject,
-  Observable,
-  Subscription,
-  combineLatest,
+  CommonModule
+} from '@angular/common'
+import {
+  take,
   distinctUntilChanged,
-  filter,
-  map,
-  take
+  map
 } from 'rxjs'
+import {
+  toSignal
+} from '@angular/core/rxjs-interop'
 import {
   Log,
   Ride,
@@ -43,169 +46,169 @@ import {
   RideService
 } from '../../services'
 import {
-  MatSnackBar
+  MatSnackBar,
+  MatSnackBarModule
 } from '@angular/material/snack-bar'
 import {
-  Router
+  Router,
+  RouterModule
 } from '@angular/router'
 import {
-  FormControl
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule
 } from '@angular/forms'
 import {
   Chart
 } from 'chart.js'
 import {
   ViewportScroller
-} from '@angular/common';
+} from '@angular/common'
+import {
+  MatButtonModule
+} from "@angular/material/button"
+import {
+  MatCheckboxModule
+} from '@angular/material/checkbox'
+import {
+  MatInputModule
+} from '@angular/material/input'
+import {
+  RideMapGoogleComponent,
+  StatisticTileComponent
+} from "../../components"
 
 @Component({
   selector: 'app-ride',
-  standalone: false,
-
+  standalone: true,
+  imports: [CommonModule, RouterModule, MatSnackBarModule, MatButtonModule, MatCheckboxModule, MatInputModule, FormsModule, ReactiveFormsModule, RideMapGoogleComponent, StatisticTileComponent],
   templateUrl: './ride.component.html',
-  styleUrl: './ride.component.scss'
+  styleUrl: './ride.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
+export class RideComponent {
   private store = inject(Store);
   private rideService = inject(RideService);
   private snackBar = inject(MatSnackBar);
   private router = inject(Router);
   private viewportScroller = inject(ViewportScroller);
 
-
-  public ride$: Observable<Ride>;
-  public averageSpeed$: Observable<number>;
-  public maxSpeed$: Observable<number>;
-  public maxTilt$: Observable<number>;
-  public drivingDuration$: Observable<number>;
-  public pauseDuration$: Observable<number>;
-  public speedZones$: Observable<{ zone: SpeedZone; distance: number }[]>
-  public interpolateCheckbox = new FormControl();
-
-  public showMapLabels$: Observable<boolean>;
-
-  private subscriptions: Subscription[] = [];
-  private interpolation = new BehaviorSubject<boolean>(false);
-  private chartInstances?: {speed?: Chart, tilt?: Chart};
-
-  @ViewChild('speedChart')
-  private speedChart: ElementRef | undefined;
-
-  @ViewChild('tiltChart')
-  private tiltChart: ElementRef | undefined;
-
-  constructor() {
-    this.ride$ = this.store.select(selectRide).pipe(
+  public ride = toSignal(
+    this.store.select(selectRide).pipe(
       distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
-    );
+    ),
+    { initialValue: undefined }
+  ) as Signal<Ride | undefined>;
 
-    this.showMapLabels$ = this.store.select(selectUiState).pipe(
+  public interpolateCheckbox = new FormControl();
+  public interpolation = signal<boolean>(false);
+
+  public showMapLabels = toSignal(
+    this.store.select(selectUiState).pipe(
       map((state) => state?.showLabels || false),
       distinctUntilChanged()
-    )
+    ),
+    { initialValue: false }
+  );
 
-    this.averageSpeed$ = this.ride$.pipe(
-      filter((ride) => !!ride.logs),
-      map(getSpeedArray),
-      map(average),
-      map(Math.round)
-    );
+  public averageSpeed = computed(() => {
+    const ride = this.ride();
+    if (!ride?.logs) return 0;
+    return Math.round(average(getSpeedArray(ride)));
+  });
 
-    this.maxSpeed$ = this.ride$.pipe(
-      filter((ride) => !!ride.logs),
-      map(getSpeedArray),
-      map(max),
-      map(Math.round)
-    );
+  public maxSpeed = computed(() => {
+    const ride = this.ride();
+    if (!ride?.logs) return 0;
+    return Math.round(max(getSpeedArray(ride)));
+  });
 
-    this.maxTilt$ = this.ride$.pipe(
-      filter((ride) => !!ride.logs),
-      map(getTiltArray),
-      map(max),
-      map(Math.round)
-    );
+  public maxTilt = computed(() => {
+    const ride = this.ride();
+    if (!ride?.logs) return 0;
+    return Math.round(max(getTiltArray(ride)));
+  });
 
-    this.drivingDuration$ = this.ride$.pipe(
-      filter((ride) => !!ride.logs),
-      map((ride) => ride.logs),
-      map((logs) => {
-        let duration = 0;
-        logs?.forEach((log, index) => {
-          const next = logs[index + 1];
-          if (next) {
-            const hasMoved = (next.distance - log.distance) > 2; // less than 2 meters, considers that we did not yet move
-            if (hasMoved) {
-              duration += (next.gpsTimestamp - log.gpsTimestamp);
-            }
-          }
-        });
-
-        return Math.round(duration);
-      })
-    )
-
-    this.pauseDuration$ = combineLatest([
-      this.ride$.pipe(map((ride) => Math.round((ride.endDate.getTime() - ride.startDate.getTime())))),
-      this.drivingDuration$
-    ]).pipe(map(([totalDuration, drivingDuration]) => {
-      return totalDuration - drivingDuration;
-    }));
-
-    this.speedZones$ = this.ride$.pipe(
-      filter((ride) => !!ride.logs),
-      map((ride) => ride.logs),
-      map((logs) => {
-        const output: { zone: SpeedZone; distance: number }[] = [];
-
-        logs?.forEach((log, index) => {
-          const next = logs[index + 1];
-          if (next) {
-            const distance = next.distance - log.distance;
-            const speedZone = getSpeedZone(log.speed);
-            const stat = output.find(e => e.zone === speedZone);
-            if (stat) {
-              stat.distance += distance;
-            }
-            else {
-              output.push({
-                zone: speedZone,
-                distance: distance
-              });
-            }
-          }
-        });
-
-        return output;
-      })
-    )
-  }
-
-  ngOnInit(): void {
-    this.subscriptions.push(
-      this.interpolateCheckbox.valueChanges.subscribe((change) => {
-        this.interpolation.next(change);
-      })
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(value => value.unsubscribe());
-  }
-
-  ngAfterViewInit(): void {
+  public drivingDuration = computed(() => {
+    const ride = this.ride();
+    if (!ride?.logs) return 0;
     
-    this.subscriptions.push(
-      combineLatest([
-        this.ride$.pipe(map((ride) => ride.logs)),
-        this.interpolation.asObservable()
-      ]).subscribe(([logs, interpolation]) => {
-        this.createCharts(logs!, interpolation);
-      })
-    );
+    let duration = 0;
+    ride.logs.forEach((log: Log, index: number) => {
+      const next = ride.logs![index + 1];
+      if (next) {
+        const hasMoved = (next.distance - log.distance) > 2;
+        if (hasMoved) {
+          duration += (next.gpsTimestamp - log.gpsTimestamp);
+        }
+      }
+    });
+
+    return Math.round(duration);
+  });
+
+  public pauseDuration = computed(() => {
+    const ride = this.ride();
+    if (!ride) return 0;
+    const totalDuration = Math.round(ride.endDate.getTime() - ride.startDate.getTime());
+    return totalDuration - this.drivingDuration();
+  });
+
+  public speedZones = computed(() => {
+    const ride = this.ride();
+    if (!ride?.logs) return [];
+
+    const output: { zone: SpeedZone; distance: number }[] = [];
+
+    ride.logs.forEach((log: Log, index: number) => {
+      const next = ride.logs![index + 1];
+      if (next) {
+        const distance = next.distance - log.distance;
+        const speedZone = getSpeedZone(log.speed);
+        const stat = output.find(e => e.zone === speedZone);
+        if (stat) {
+          stat.distance += distance;
+        }
+        else {
+          output.push({
+            zone: speedZone,
+            distance: distance
+          });
+        }
+      }
+    });
+
+    return output;
+  });
+
+  private chartInstances?: {speed?: Chart, tilt?: Chart};
+
+  private speedChart = viewChild<ElementRef>('speedChart');
+
+  private tiltChart = viewChild<ElementRef>('tiltChart');
+
+  constructor() {
+    // Subscribe to checkbox value changes and update interpolation signal
+    this.interpolateCheckbox.valueChanges.subscribe((change) => {
+      this.interpolation.set(change);
+    });
+
+    // Effect to handle chart creation when logs or interpolation changes
+    // The effect includes a guard to ensure ViewChild elements are available
+    effect(() => {
+      const logs = this.ride()?.logs;
+      const interpolation = this.interpolation();
+      const speedChart = this.speedChart();
+      const tiltChart = this.tiltChart();
+      
+      if (logs && speedChart?.nativeElement && tiltChart?.nativeElement) {
+        this.createCharts(logs, interpolation, speedChart.nativeElement, tiltChart.nativeElement);
+      }
+    });
   }
 
-  private createCharts(logs: Log[], interpolation: boolean) {
-
+  private createCharts(logs: Log[], interpolation: boolean, speedChart: HTMLCanvasElement, tiltChart: HTMLCanvasElement) {
+    
     // Workaround: when chart is re-created, chartjs scroll top.
     // We keep current scroll position and reapply at the bottom
     const currentPageScroll = this.viewportScroller.getScrollPosition()[1];
@@ -215,8 +218,8 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
     this.chartInstances?.tilt?.destroy();
 
     this.chartInstances = createCharts(logs, interpolation, {
-      speed: this.speedChart!.nativeElement,
-      tilt: this.tiltChart!.nativeElement
+      speed: speedChart,
+      tilt: tiltChart
     });
 
     // Scroll to previous position
@@ -225,16 +228,14 @@ export class RideComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
   public export(id: string) {
-    this.subscriptions.push(
-      this.rideService.export(id).pipe(take(1)).subscribe(
-        result => {
-          if (result) {
-            this.snackBar.open('Ride has been sent to your email', undefined, {
-              duration: 3000
-            });
-          }
+    this.rideService.export(id).pipe(take(1)).subscribe(
+      result => {
+        if (result) {
+          this.snackBar.open('Ride has been sent to your email', undefined, {
+            duration: 3000
+          });
         }
-      )
+      }
     )
   }
 

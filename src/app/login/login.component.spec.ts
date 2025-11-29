@@ -1,9 +1,10 @@
 import {
   ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick
+  TestBed
 } from '@angular/core/testing'
+import {
+  provideZonelessChangeDetection
+} from '@angular/core'
 
 import {
   LoginComponent
@@ -58,8 +59,8 @@ describe('LoginComponent', () => {
     authenticationService = new AuthenticationServiceFixture();
 
     await TestBed.configureTestingModule({
-      declarations: [LoginComponent],
       imports: [
+        LoginComponent,
         MatButtonModule,
         MatCardModule,
         MatInputModule,
@@ -70,6 +71,7 @@ describe('LoginComponent', () => {
         }])
       ],
       providers: [
+        provideZonelessChangeDetection(),
         provideMockStore(),
         {
           provide: AuthenticationService,
@@ -87,7 +89,7 @@ describe('LoginComponent', () => {
     store.overrideSelector(selectToken, MOCK_TOKEN);
     
     router = TestBed.inject(Router)
-
+    
     fixture.detectChanges();
   });
 
@@ -95,7 +97,8 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should update the store once succesfully submitted', fakeAsync(() => {
+
+  it('should update the store once succesfully submitted', async () => {
     const dispatchSpy = spyOn(store, 'dispatch').and.callThrough();
     const routerSpy = spyOn(router, 'navigate').and.callThrough();
     
@@ -106,8 +109,7 @@ describe('LoginComponent', () => {
     component.form.markAllAsTouched();
     component.onSubmit();
     
-    tick();
-    fixture.detectChanges();
+    await fixture.whenStable();
     
     // No error message
     expect(componentFixture.hasServerErrorText()).toBeFalse();
@@ -123,9 +125,9 @@ describe('LoginComponent', () => {
 
     // Redirect to the rides page
     expect(routerSpy).toHaveBeenCalledOnceWith(['rides']);
-  }));
+  });
 
-  it('should show error in case of wrong authentication', fakeAsync(() => {
+  it('should show error in case of wrong authentication', async () => {
 
     // Force the error case
     authenticationService.getToken = jasmine.createSpy('getToken').and.returnValue(of({
@@ -142,8 +144,7 @@ describe('LoginComponent', () => {
     component.form.markAllAsTouched();
     component.onSubmit();
     
-    tick();
-    fixture.detectChanges();
+    await fixture.whenStable();
     
     // Error message displayed
     expect(componentFixture.hasServerErrorText()).toBeTrue();
@@ -154,5 +155,5 @@ describe('LoginComponent', () => {
 
     // We must not redirect out of the login page
     expect(routerSpy).not.toHaveBeenCalled();
-  }));
+  });
 });

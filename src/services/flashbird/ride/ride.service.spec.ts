@@ -1,7 +1,6 @@
 import {
   TestBed
 } from '@angular/core/testing'
-
 import {
   RideService
 } from './ride.service'
