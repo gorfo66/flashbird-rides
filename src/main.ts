@@ -53,11 +53,15 @@ import {
 } from './services';
 import {
   reducers,
-  metaReducers
+  metaReducers,
+  effects
 } from './store';
 import {
   ngrxDevtools
 } from './devtools';
+import {
+  provideEffects
+} from '@ngrx/effects';
 
 registerLocaleData(localeFr, 'fr');
 
@@ -67,6 +71,7 @@ bootstrapApplication(AppComponent, {
     provideAnimationsAsync(),
     provideRouter(routes) as unknown as Provider,
     provideStore(reducers, { metaReducers }) as unknown as Provider,
+    provideEffects(effects),
     ngrxDevtools,
     provideHttpClient(withInterceptors([])) as unknown as Provider,
     provideServiceWorker('ngsw-worker.js', {

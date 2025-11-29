@@ -31,11 +31,15 @@ export const tokenReducer = createReducer<string | undefined>(
   on(upsertAuthToken, (_state, { token }) => token)
 );
 
+
+const defaultUiState: UiState = {
+  isPending: false,
+  filter: 'all',
+  errorMessage: ''
+}
+
 export const uiStateReducer = createReducer<UiState>(
-  {
-    isPending: true,
-    filter: 'all'
-  },
+  defaultUiState,
   on(upsertUiState, (state, { uiState }) => ({
     ...state,
     ...uiState
@@ -54,10 +58,7 @@ export const hydrationMetaReducer = (
           rides: undefined,
           ride: undefined,
           token,
-          uiState: uiState ? JSON.parse(uiState) : {
-            isPending: true,
-            filter: 'all'
-          }
+          uiState: uiState ? JSON.parse(uiState) : defaultUiState
         }
       }
     }

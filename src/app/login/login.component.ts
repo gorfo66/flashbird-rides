@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  signal,
-  inject
+  inject,
+  effect
 } from '@angular/core'
 import {
   CommonModule
@@ -14,16 +14,16 @@ import {
   ReactiveFormsModule
 } from '@angular/forms'
 import {
-  AuthenticationService
-} from '../../services'
-import {
-  take
+  filter,
+  map,
 } from 'rxjs'
 import {
   Store
 } from '@ngrx/store'
 import {
-  upsertAuthToken
+  login,
+  selectToken,
+  selectUiState,
 } from '../../store'
 import {
   Router
@@ -37,6 +37,9 @@ import {
 import {
   MatInputModule
 } from "@angular/material/input"
+import {
+  toSignal
+} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-login-',
@@ -47,11 +50,11 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
-  private authService = inject(AuthenticationService);
   private store = inject(Store);
   private router = inject(Router);
 
-  public errorMessage = signal<string>('');
+  public errorMessage = toSignal(this.store.select(selectUiState).pipe(map((state) => state?.errorMessage || '')));
+  private token = toSignal(this.store.select(selectToken).pipe(filter( (token) => !!token)))
 
   public readonly form: FormGroup;
 
@@ -60,20 +63,18 @@ export class LoginComponent {
       login: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', Validators.required)
     });
+
+
+    effect(() => {
+      if (this.token()) {
+        this.router.navigate(['rides']);
+      }
+    })
   }
 
   public onSubmit() {
     if (this.form.valid) {
-      const login = this.form.value.login;
-      const password = this.form.value.password;
-      this.authService.getToken(login, password).pipe(take(1)).subscribe((reply) => {
-        if (reply.error) {
-          this.errorMessage.set(reply.error);
-          return;
-        }
-        this.store.dispatch(upsertAuthToken({ token: reply.token! }));
-        this.router.navigate(['rides']);
-      })
+      this.store.dispatch(login({ login: this.form.value.login, password: this.form.value.password}));
     }
     return false;
   }

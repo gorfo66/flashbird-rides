@@ -5,7 +5,8 @@ import {
 export interface UiState {
   isPending?: boolean;
   filter?: string;
-  showLabels?: boolean
+  showLabels?: boolean;
+  errorMessage?: string;
 }
 
 export interface RootState {
