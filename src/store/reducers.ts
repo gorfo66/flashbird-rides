@@ -33,7 +33,7 @@ export const tokenReducer = createReducer<string | undefined>(
 
 export const uiStateReducer = createReducer<UiState>(
   {
-    isPending: false,
+    isPending: true,
     filter: 'all'
   },
   on(upsertUiState, (state, { uiState }) => ({
@@ -55,7 +55,7 @@ export const hydrationMetaReducer = (
           ride: undefined,
           token,
           uiState: uiState ? JSON.parse(uiState) : {
-            isPending: false,
+            isPending: true,
             filter: 'all'
           }
         }

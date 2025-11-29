@@ -49,5 +49,15 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "8.46.3"
+  },
+  "overrides": {
+    "@ngrx/store": {
+      "@angular/common": "$@angular/common",
+      "@angular/core": "$@angular/core"
+    },
+    "@ngrx/store-devtools": {
+      "@angular/common": "$@angular/common",
+      "@angular/core": "$@angular/core"
+    }
   }
 }

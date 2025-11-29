@@ -71,7 +71,13 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/devtools/ngrx-devtools.ts",
+                  "with": "src/devtools/ngrx-devtools.dev.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"

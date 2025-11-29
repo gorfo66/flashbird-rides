@@ -39,9 +39,6 @@ import {
   provideStore
 } from '@ngrx/store';
 import {
-  provideStoreDevtools
-} from '@ngrx/store-devtools';
-import {
   RidesGuard,
   RideGuard
 } from './app';
@@ -58,6 +55,9 @@ import {
   reducers,
   metaReducers
 } from './store';
+import {
+  ngrxDevtools
+} from './devtools';
 
 registerLocaleData(localeFr, 'fr');
 
@@ -67,7 +67,7 @@ bootstrapApplication(AppComponent, {
     provideAnimationsAsync(),
     provideRouter(routes) as unknown as Provider,
     provideStore(reducers, { metaReducers }) as unknown as Provider,
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }) as unknown as Provider,
+    ngrxDevtools,
     provideHttpClient(withInterceptors([])) as unknown as Provider,
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
