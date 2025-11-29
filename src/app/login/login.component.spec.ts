@@ -33,7 +33,8 @@ import {
   provideMockStore
 } from '@ngrx/store/testing'
 import {
-  selectToken
+  selectToken,
+  selectUiState
 } from '../../store'
 import {
   Router,
@@ -42,9 +43,6 @@ import {
 import {
   LoginComponentFixture
 } from './login.fixture';
-import {
-  of
-} from 'rxjs';
 
 
 describe('LoginComponent', () => {
@@ -86,7 +84,7 @@ describe('LoginComponent', () => {
     componentFixture = new LoginComponentFixture(fixture.debugElement);
 
     store = TestBed.inject(MockStore);
-    store.overrideSelector(selectToken, MOCK_TOKEN);
+    
     
     router = TestBed.inject(Router)
     
@@ -110,33 +108,32 @@ describe('LoginComponent', () => {
     component.onSubmit();
     
     await fixture.whenStable();
-    
-    // No error message
-    expect(componentFixture.hasServerErrorText()).toBeFalse();
-
-    // Call the authentication service
-    expect(authenticationService.getToken).toHaveBeenCalledWith(login, password);
 
     // Dispatch the token to the store
     expect(dispatchSpy).toHaveBeenCalledOnceWith(
-      { token: MOCK_TOKEN,
-        type: '[Auth] Upsert token' }
+      { login: login,
+        password: password,
+        type: '[Auth] Login'
+      }
     );
+
+    store.overrideSelector(selectToken, MOCK_TOKEN);
+    store.overrideSelector(selectUiState, { 
+      errorMessage: ''
+    })
+    store.refreshState();
+    await fixture.whenStable();
+    
+    // No error message
+    expect(componentFixture.hasServerErrorText()).toBeFalse();
 
     // Redirect to the rides page
     expect(routerSpy).toHaveBeenCalledOnceWith(['rides']);
   });
 
   it('should show error in case of wrong authentication', async () => {
-
-    // Force the error case
-    authenticationService.getToken = jasmine.createSpy('getToken').and.returnValue(of({
-      error: 'auth error'
-    }));
-
-    const dispatchSpy = spyOn(store, 'dispatch').and.callThrough();
     const routerSpy = spyOn(router, 'navigate').and.callThrough();
-    
+        
     const login = 'login@domain.com';
     const password = 'password';
     component.form.controls['login'].setValue(login);
@@ -145,13 +142,18 @@ describe('LoginComponent', () => {
     component.onSubmit();
     
     await fixture.whenStable();
+
+    store.overrideSelector(selectToken, '')
+    store.overrideSelector(selectUiState, { 
+      errorMessage: 'auth error'
+    })
+
+    store.refreshState();
+    await fixture.whenStable();
     
     // Error message displayed
     expect(componentFixture.hasServerErrorText()).toBeTrue();
     expect(componentFixture.getServerErrorText()).toEqual('auth error');
-
-    // We must not dispatch anything to the store
-    expect(dispatchSpy).not.toHaveBeenCalled();
 
     // We must not redirect out of the login page
     expect(routerSpy).not.toHaveBeenCalled();
