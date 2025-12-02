@@ -6,9 +6,7 @@ export class ElevationServiceFixture implements Readonly<ElevationService> {
 
   public getElevations: jasmine.Spy;
 
-  constructor() { 
+  constructor() {
     this.getElevations = jasmine.createSpy('getElevations');
-
   }
-
 }

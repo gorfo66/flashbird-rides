@@ -42,7 +42,7 @@ import {
 } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'app-login-',
+  selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, MatButtonModule, MatCardModule, MatInputModule],
   templateUrl: './login.component.html',
