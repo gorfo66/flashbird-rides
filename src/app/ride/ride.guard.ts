@@ -9,21 +9,19 @@ import {
   MaybeAsync
 } from "@angular/router"
 import {
+  filter,
   map
 } from "rxjs"
-import {
-  RideService
-} from "../../services"
 import {
   Store
 } from "@ngrx/store"
 import {
-  upsertRide
+  fetchRide,
+  selectRide,
 } from "../../store"
 
 @Injectable()
 export class RideGuard implements CanActivate {
-  private rideService = inject(RideService);
   private store = inject(Store);
 
   canActivate(
@@ -32,11 +30,10 @@ export class RideGuard implements CanActivate {
 
     const id = route.paramMap.get('id');
     if (id) {
-      return this.rideService.getRide(id).pipe(
-        map((ride) => {
-          this.store.dispatch(upsertRide({ ride }));
-          return true;
-        })
+      this.store.dispatch(fetchRide({ rideId: id }));
+      return this.store.select(selectRide).pipe(
+        filter( ride => !!ride),
+        map(() => true)
       )
     }
     

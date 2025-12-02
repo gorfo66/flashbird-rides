@@ -13,7 +13,7 @@ export const upsertAuthToken = createAction(
 );
 
 export const upsertRides = createAction(
-  '[Ride] upsert ride list',
+  '[Ride] upsert rides list',
   props<{ rides: Ride[] }>()
 );
 
@@ -25,4 +25,18 @@ export const upsertRide = createAction(
 export const upsertUiState = createAction(
   '[Ui] upsert state',
   props<{ uiState: UiState }>()
+);
+
+export const fetchRide = createAction(
+  '[Ride] fetch ride',
+  props<{ rideId: string }>()
+);
+
+export const fetchRides = createAction(
+  '[Ride] fetch rides list'
+);
+
+export const login = createAction(
+  '[Auth] Login',
+  props<{ login: string, password: string}>()
 );
