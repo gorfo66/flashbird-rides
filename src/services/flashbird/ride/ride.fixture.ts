@@ -16,11 +16,12 @@ export class RideServiceFixture implements Readonly<RideService> {
   public getRides: jasmine.Spy;
   public getRide: jasmine.Spy;
   public export: jasmine.Spy;
-
+  public getRideUnion: jasmine.Spy;
 
   constructor() {
     this.getRides = jasmine.createSpy('getRides').and.returnValue(of(MOCK_RIDES));
     this.getRide = jasmine.createSpy('getRide').and.returnValue(of(MOCK_RIDE));
+    this.getRideUnion = jasmine.createSpy('getRideUnion').and.returnValue(of(MOCK_RIDE));
     this.export = jasmine.createSpy('export').and.returnValue(of(true));
   }
 

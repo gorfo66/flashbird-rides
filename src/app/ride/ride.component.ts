@@ -129,29 +129,9 @@ export class RideComponent {
     return Math.round(max(getTiltArray(ride)));
   });
 
-  public drivingDuration = computed(() => {
+  public duration = computed(() => {
     const ride = this.ride();
-    if (!ride?.logs) return 0;
-    
-    let duration = 0;
-    ride.logs.forEach((log: Log, index: number) => {
-      const next = ride.logs![index + 1];
-      if (next) {
-        const hasMoved = (next.distance - log.distance) > 2;
-        if (hasMoved) {
-          duration += (next.gpsTimestamp - log.gpsTimestamp);
-        }
-      }
-    });
-
-    return Math.round(duration);
-  });
-
-  public pauseDuration = computed(() => {
-    const ride = this.ride();
-    if (!ride) return 0;
-    const totalDuration = Math.round(ride.endDate.getTime() - ride.startDate.getTime());
-    return totalDuration - this.drivingDuration();
+    return ride ? ride.endTime - ride.startTime : 0;
   });
 
   public speedZones = computed(() => {
@@ -180,6 +160,11 @@ export class RideComponent {
 
     return output;
   });
+
+  public showExport = computed(() => {
+    const ride = this.ride();
+    return ride && (!ride.childRideIds || !ride.childRideIds.length)
+  })
 
   private chartInstances?: {speed?: Chart, tilt?: Chart};
 

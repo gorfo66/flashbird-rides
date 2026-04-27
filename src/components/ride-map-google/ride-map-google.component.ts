@@ -27,7 +27,8 @@ import {
 } from '@angular/core/rxjs-interop'
 import {
   getSpeedZone,
-  getSpeedZoneInfo
+  getSpeedZoneInfo,
+  distanceInKmBetweenEarthCoordinates
 } from '../../helpers'
 import {
   FormControl,
@@ -147,7 +148,8 @@ export class RideMapGoogleComponent implements OnInit, AfterViewInit {
             }
           ];
           line.altitudeMode = AltitudeMode.CLAMP_TO_GROUND;
-          line.strokeColor = getSpeedZoneInfo(getSpeedZone(log.speed)).color;
+          const distance = distanceInKmBetweenEarthCoordinates(log, next);
+          line.strokeColor = distance > 5 ? '#bbbbbb' : getSpeedZoneInfo(getSpeedZone(log.speed)).color;
           line.strokeWidth = 5;
           line.strokeOpacity = 0.3;
           this.map3d.append(line);

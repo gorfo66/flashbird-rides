@@ -16,6 +16,7 @@ import {
 } from '../services';
 import {
   fetchRide,
+  fetchRideUnion,
   fetchRides,
   login,
   upsertAuthToken,
@@ -40,6 +41,17 @@ export const fetchRideEffect$ = createEffect(
     return actions$.pipe(
       ofType(fetchRide),
       switchMap((action) => rideService.getRide(action.rideId)),
+      map((ride) => upsertRide({ ride }))
+    );
+  },
+  { functional: true }
+);
+
+export const fetchRideUnionEffect$ = createEffect(
+  (actions$ = inject(Actions), rideService = inject(RideService)) => {
+    return actions$.pipe(
+      ofType(fetchRideUnion),
+      switchMap((action) => rideService.getRideUnion(action.rideIds)),
       map((ride) => upsertRide({ ride }))
     );
   },
@@ -90,6 +102,7 @@ export const loginEffect$ = createEffect(
 export const effects = {
   fetchRidesEffect$,
   fetchRideEffect$,
+  fetchRideUnionEffect$,
   loginEffect$,
   loginEffectResetMessage$
 };
