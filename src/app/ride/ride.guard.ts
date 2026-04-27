@@ -17,6 +17,7 @@ import {
 } from "@ngrx/store"
 import {
   fetchRide,
+  fetchRideUnion,
   selectRide,
 } from "../../store"
 
@@ -30,7 +31,15 @@ export class RideGuard implements CanActivate {
 
     const id = route.paramMap.get('id');
     if (id) {
-      this.store.dispatch(fetchRide({ rideId: id }));
+
+      const ids = id.split('+');
+      if (ids.length > 1) {
+        this.store.dispatch(fetchRideUnion({ rideIds: ids }));
+      }
+      else {
+        this.store.dispatch(fetchRide({ rideId: id }));
+      }
+      
       return this.store.select(selectRide).pipe(
         filter( ride => !!ride),
         map(() => true)

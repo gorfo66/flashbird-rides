@@ -6,13 +6,14 @@
     </div>
     <div class='actions-container'>
       <button mat-button (click)="back()" id="back-button">Retour</button>
-      <button mat-button (click)="export(ride()!.id)" id="export-button">Exporter en GPX</button>
+      @if (showExport()) {
+        <button mat-button (click)="export(ride()!.id)" id="export-button">Exporter en GPX</button>
+      }
     </div>
   </div>
   <div class='statistics-container'>
     <app-statistic-tile id = 'stat-distance' label="Distance" unit="km" [value]="Math.round(ride()!.distance / 1000)"></app-statistic-tile>
-    <app-statistic-tile id = 'stat-driving-duration' label="Durée de route" unit="" [value]="drivingDuration() | date: 'HH:mm':'UTC'"></app-statistic-tile>
-    <app-statistic-tile id = 'stat-break-duration' label="Durée de pause" unit="" [value]="pauseDuration() | date: 'HH:mm':'UTC'"></app-statistic-tile>
+    <app-statistic-tile id = 'stat-duration' label="Durée" unit="" [value]="duration() | date: 'HH:mm':'UTC'"></app-statistic-tile>
     <app-statistic-tile id = 'stat-average-speed' label="Vitesse moyenne" unit="km/h" [value]="averageSpeed()"></app-statistic-tile>
     <app-statistic-tile id = 'stat-max-speed' label="Vitesse maxi" unit="km/h" [value]="maxSpeed()"></app-statistic-tile>
     <app-statistic-tile id = 'stat-max-tilt' label="Angle maxi" unit="degrés" [value]="maxTilt()"></app-statistic-tile>

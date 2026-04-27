@@ -32,6 +32,11 @@ export const fetchRide = createAction(
   props<{ rideId: string }>()
 );
 
+export const fetchRideUnion = createAction(
+  '[Ride] fetch ride union',
+  props<{ rideIds: string[] }>()
+);
+
 export const fetchRides = createAction(
   '[Ride] fetch rides list'
 );

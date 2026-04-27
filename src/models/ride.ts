@@ -13,6 +13,7 @@ export interface Ride {
   endLocation: string;
   distance: number;
   logs?: Log[];
+  childRideIds?: string[];
 }
 
 
