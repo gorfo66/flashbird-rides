@@ -5,6 +5,9 @@ on:
     - cron: "0 3 * * 1" # Run at 3 AM every Monday
   workflow_dispatch: # Allow manual trigger
 
+permissions:
+  contents: read
+
 jobs:
   renovate:
     runs-on: ubuntu-latest
