@@ -2,10 +2,11 @@ name: Renovate
 
 on:
   schedule:
-    - cron: "0 3 * * 1" # Run at 3 AM every Monday
+    - cron: "0 3 * * *" # Run at 3 AM every Monday
   workflow_dispatch: # Allow manual trigger
 
 permissions:
+  pull-requests: write
   contents: read
 
 jobs:
@@ -15,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Self-hosted Renovate
+      - name: Run renovate
         uses: renovatebot/github-action@v46.1.14
         env:
           LOG_LEVEL: debug
