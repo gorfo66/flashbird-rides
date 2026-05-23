@@ -2,7 +2,7 @@ name: Renovate
 
 on:
   schedule:
-    - cron: "0 3 * * *" # Run at 3 AM every Monday
+    - cron: "0 3 * * 6" # Run at 3 AM every Saturday
   workflow_dispatch: # Allow manual trigger
 
 permissions:

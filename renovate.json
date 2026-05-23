@@ -24,7 +24,7 @@
   ],
   "npm": {},
   "schedule": [
-    "after 3am on Monday"
+    "at any time"
   ],
   "semanticCommits": "enabled",
   "semanticCommitScope": "deps",
