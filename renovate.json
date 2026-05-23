@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
   "packageRules": [
     {
@@ -17,14 +17,12 @@
       "automergeStrategy": "squash"
     },
     {
-      "matchPackagePatterns": ["@angular*", "angular-eslint", "@ngrx*"],
       "groupName": "Angular and related packages",
-      "automerge": false
+      "automerge": false,
+      "matchPackageNames": ["/@angular.*/", "/angular-eslint/", "/@ngrx.*/"]
     }
   ],
-  "npm": {
-    "supportPolicy": ["active"]
-  },
+  "npm": {},
   "schedule": [
     "after 3am on Monday"
   ],
@@ -34,7 +32,5 @@
   "prCreation": "auto",
   "vulnerabilityAlerts": {
     "enabled": true
-  },
-  "requiredStatusChecks": ["Build and Test"],
-  "automergeWaitForStatus": "all"
+  }
 }
