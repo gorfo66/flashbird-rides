@@ -29,7 +29,7 @@
   "semanticCommits": "enabled",
   "semanticCommitScope": "deps",
   "prConcurrentLimit": 5,
-  "prCreation": "auto",
+  "prCreation": "immediate",
   "vulnerabilityAlerts": {
     "enabled": true
   }
