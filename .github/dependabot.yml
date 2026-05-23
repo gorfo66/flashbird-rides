@@ -27,4 +27,11 @@ updates:
           - "eslint"
           - "jasmine-core"
           - "karma*"
+    ignore:
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "@angular/*"
+        update-types:
+          - "version-update:semver-major"
 
