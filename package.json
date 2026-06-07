@@ -47,7 +47,7 @@
     "angular-eslint": "21.4.0",
     "eslint": "^10.0.3",
     "eslint-plugin-import-newlines": "^2.0.0",
-    "jasmine-core": "~6.2.0",
+    "jasmine-core": "~6.3.0",
     "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.1",
