@@ -19,16 +19,34 @@
     {
       "groupName": "Angular and related packages",
       "automerge": false,
-      "matchPackageNames": ["/@angular.*/", "/angular-eslint/", "/@ngrx.*/"]
+      "matchPackageNames": [
+        "/^@angular\\//",
+        "/^angular-eslint/",
+        "/^@ngrx\\//"
+      ]
+    },
+    {
+      "groupName": "Angular and related packages",
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "squash",
+      "matchPackageNames": [
+        "/^@angular\\//",
+        "/^angular-eslint/",
+        "/^@ngrx\\//"
+      ]
     }
   ],
   "npm": {},
   "schedule": [
     "at any time"
   ],
+  "minimumReleaseAge": "7 days",
   "semanticCommits": "enabled",
   "semanticCommitScope": "deps",
   "prConcurrentLimit": 5,
+  "rebaseWhen": "behind-base-branch",
   "prCreation": "immediate",
   "vulnerabilityAlerts": {
     "enabled": true
