@@ -15,7 +15,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: Check out the repository to the runner
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Install
         run: npm install
       - name: Lint
@@ -37,7 +37,7 @@ jobs:
           output: both
           thresholds: '60 80'
       - name: Add Coverage PR Comment
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3.0.5
         if: github.event_name == 'pull_request'
         with:
           recreate: true
