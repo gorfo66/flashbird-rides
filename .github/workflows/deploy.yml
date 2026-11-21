@@ -13,9 +13,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: Check out the repository to the runner
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: 24.15.0
           cache: npm
@@ -28,7 +28,7 @@ jobs:
       - name: Test
         run: npm run test:ci
       - name: Deploy
-        uses: milanmk/actions-file-deployer@master
+        uses: milanmk/actions-file-deployer@1.18
         with:
           remote-protocol: ftp
           remote-host: ${{ secrets.FTP_HOST }}
