@@ -1,11 +1,13 @@
 import {
   Component,
-  Input
+  Input,
+  ChangeDetectionStrategy
 } from '@angular/core'
 
 @Component({
   selector: 'app-statistic-tile',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: ''
 })
 export class MockStatisticTileComponent {

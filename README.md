@@ -2,13 +2,13 @@
 Flashbird is a French company that develop and distribute trackers. For more information regarding the brand, please have a look at their website [https://smtperformances.fr/](https://smtperformances.fr/). This project allow to visualize the rides that are recorded by the Flashbird tracker and provides some statistics.
 
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.6.
+This project uses [Angular CLI](https://github.com/angular/angular-cli) version 22.
 
 
 ## Development server
 
 ### Pre-requisites
-Node 22+
+Node.js 22.22.3+, 24.15.0+, or 26.0.0+
 
 ### To start
 To start a local development server, run:

@@ -1,7 +1,8 @@
 import {
   HTTP_INTERCEPTORS,
   provideHttpClient,
-  withInterceptorsFromDi
+  withInterceptorsFromDi,
+  withXhr
 } from '@angular/common/http'
 import {
   AuthHeaderInterceptor
@@ -15,7 +16,7 @@ import {
 
 /** Array of Http interceptor providers in outside-in order */
 export const httpInterceptorProviders = [
-  provideHttpClient(withInterceptorsFromDi()),
+  provideHttpClient(withXhr(), withInterceptorsFromDi()),
   { provide: HTTP_INTERCEPTORS,
     useClass: ContentTypeInterceptor,
     multi: true },

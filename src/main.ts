@@ -21,7 +21,8 @@ import {
 } from '@angular/common'
 import {
   provideHttpClient,
-  withInterceptors
+  withInterceptors,
+  withXhr
 } from '@angular/common/http';
 import {
   MAT_CARD_CONFIG
@@ -73,7 +74,7 @@ bootstrapApplication(AppComponent, {
     provideStore(reducers, { metaReducers }) as unknown as Provider,
     provideEffects(effects),
     ngrxDevtools,
-    provideHttpClient(withInterceptors([])) as unknown as Provider,
+    provideHttpClient(withXhr(), withInterceptors([])) as unknown as Provider,
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:20000'
