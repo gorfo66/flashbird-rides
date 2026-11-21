@@ -2,7 +2,8 @@ import {
   Component,
   EventEmitter,
   input,
-  Output
+  Output,
+  ChangeDetectionStrategy
 } from '@angular/core'
 import {
   Ride
@@ -11,6 +12,7 @@ import {
 @Component({
   selector: 'app-ride-map-google',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: ''
 })
 export class MockRideMapGoogleComponent {

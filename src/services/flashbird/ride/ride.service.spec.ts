@@ -6,7 +6,8 @@ import {
 } from './ride.service'
 import {
   HttpClient,
-  provideHttpClient
+  provideHttpClient,
+  withXhr
 } from '@angular/common/http'
 import {
   provideHttpClientTesting
@@ -39,7 +40,7 @@ describe('RideService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         provideHttpClientTesting(),
         {
           provide: ElevationService,
